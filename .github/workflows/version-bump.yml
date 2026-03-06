@@ -28,9 +28,11 @@ jobs:
 
       - run: npm ci
 
-      - run: npm test
-
       - run: npx tsc --noEmit
+
+      - run: npm run build
+
+      - run: npm test
 
       - name: Configure git
         run: |
