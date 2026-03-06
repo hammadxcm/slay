@@ -1,0 +1,52 @@
+{
+  "name": "slay-port",
+  "version": "0.1.0",
+  "description": "Kill processes by port. Beautifully.",
+  "type": "module",
+  "bin": {
+    "slay": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/api.js",
+      "types": "./dist/api.d.ts"
+    },
+    "./cli": "./dist/index.js"
+  },
+  "types": "./dist/api.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "check": "biome check .",
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["kill", "port", "process", "cli", "slay", "kill-port", "terminal"],
+  "author": "Hammad Khan <hammadkhanxcm@gmail.com> (https://github.com/hammadxcm)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hammadxcm/slay.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hammadxcm/slay/issues"
+  },
+  "homepage": "https://github.com/hammadxcm/slay#readme",
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.0",
+    "@types/node": "^25.3.3",
+    "@vitest/coverage-v8": "^2.1.9",
+    "picocolors": "^1.1.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}
