@@ -21,5 +21,5 @@ jobs:
       - run: npm ci
       - run: npx biome check .
       - run: npx tsc --noEmit
-      - run: npm test
       - run: npm run build
+      - run: npm test
