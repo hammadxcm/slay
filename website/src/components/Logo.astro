@@ -1,0 +1,45 @@
+---
+---
+
+<span class="logo-icon" aria-hidden="true">
+  <svg class="logo-svg" width="28" height="28" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="3" class="logo-ring-outer"/>
+    <circle cx="32" cy="32" r="14" stroke="currentColor" stroke-width="2.5" class="logo-ring-inner"/>
+    <circle cx="32" cy="32" r="3" fill="var(--red)" class="logo-dot"/>
+    <line x1="32" y1="0" x2="32" y2="18" stroke="currentColor" stroke-width="2.5" class="logo-cross"/>
+    <line x1="32" y1="46" x2="32" y2="64" stroke="currentColor" stroke-width="2.5" class="logo-cross"/>
+    <line x1="0" y1="32" x2="18" y2="32" stroke="currentColor" stroke-width="2.5" class="logo-cross"/>
+    <line x1="46" y1="32" x2="64" y2="32" stroke="currentColor" stroke-width="2.5" class="logo-cross"/>
+  </svg>
+</span>
+
+<style>
+  .logo-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--red);
+  }
+
+  .logo-dot {
+    animation: reticle-pulse 2s ease-in-out infinite;
+  }
+
+  .logo-svg {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .logo-icon:hover .logo-svg {
+    transform: rotate(360deg);
+    filter: drop-shadow(0 0 6px var(--red));
+  }
+
+  .logo-ring-outer,
+  .logo-ring-inner,
+  .logo-cross {
+    transition: opacity 0.3s;
+  }
+
+  .logo-icon:hover .logo-ring-outer { opacity: 0.7; }
+  .logo-icon:hover .logo-ring-inner { opacity: 0.9; }
+</style>

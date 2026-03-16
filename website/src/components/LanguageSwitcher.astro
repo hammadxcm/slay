@@ -1,0 +1,163 @@
+---
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'en' } = Astro.props;
+
+const languages = [
+  { code: 'en', name: 'English' },
+  { code: 'zh', name: '中文' },
+  { code: 'hi', name: 'हिन्दी' },
+  { code: 'es', name: 'Español' },
+  { code: 'ar', name: 'العربية' },
+  { code: 'fr', name: 'Français' },
+  { code: 'bn', name: 'বাংলা' },
+  { code: 'pt', name: 'Português' },
+  { code: 'ru', name: 'Русский' },
+  { code: 'ja', name: '日本語' },
+];
+---
+
+<div class="lang-switcher">
+  <button class="lang-btn" id="lang-toggle" type="button" aria-label="Switch language" aria-haspopup="true" aria-expanded="false">
+    <span class="lang-current">{languages.find(l => l.code === locale)?.name || 'English'}</span>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="lang-dropdown" id="lang-dropdown" role="menu">
+    {languages.map((lang) => (
+      <a
+        href={lang.code === 'en' ? '/' : `/${lang.code}/`}
+        class:list={['lang-option', { active: lang.code === locale }]}
+        data-lang={lang.code}
+        role="menuitem"
+      >
+        {lang.name}
+      </a>
+    ))}
+  </div>
+</div>
+
+<style>
+  .lang-switcher {
+    position: relative;
+  }
+
+  .lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-family: var(--font-sans);
+    transition: color 0.2s, border-color 0.2s;
+    min-height: 36px;
+  }
+
+  .lang-btn:hover {
+    color: var(--text);
+    border-color: var(--text-muted);
+  }
+
+  .lang-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px;
+    min-width: 140px;
+    z-index: 200;
+    box-shadow: 0 8px 30px var(--card-shadow);
+  }
+
+  .lang-dropdown.open {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .lang-option {
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    border-radius: 6px;
+    transition: background 0.15s, color 0.15s;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+  }
+
+  .lang-option:hover {
+    background: var(--icon-bg);
+    color: var(--text);
+    opacity: 1;
+  }
+
+  .lang-option.active {
+    color: var(--red);
+    font-weight: 600;
+  }
+</style>
+
+<script>
+  const langToggle = document.getElementById('lang-toggle');
+  const dropdown = document.getElementById('lang-dropdown');
+  const menuItems = Array.from(dropdown?.querySelectorAll<HTMLElement>('[role="menuitem"]') || []);
+
+  function openDropdown() {
+    dropdown?.classList.add('open');
+    langToggle?.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeDropdown(refocus = false) {
+    dropdown?.classList.remove('open');
+    langToggle?.setAttribute('aria-expanded', 'false');
+    if (refocus) langToggle?.focus();
+  }
+
+  langToggle?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = dropdown?.classList.contains('open');
+    if (isOpen) {
+      closeDropdown();
+    } else {
+      openDropdown();
+      menuItems[0]?.focus();
+    }
+  });
+
+  langToggle?.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      openDropdown();
+      menuItems[0]?.focus();
+    }
+  });
+
+  dropdown?.addEventListener('keydown', (e) => {
+    const idx = menuItems.indexOf(document.activeElement as HTMLElement);
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      closeDropdown(true);
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      menuItems[(idx + 1) % menuItems.length]?.focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      menuItems[(idx - 1 + menuItems.length) % menuItems.length]?.focus();
+    } else if (e.key === 'Tab') {
+      closeDropdown();
+    }
+  });
+
+  document.addEventListener('click', () => {
+    closeDropdown();
+  });
+</script>

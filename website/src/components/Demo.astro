@@ -1,0 +1,338 @@
+---
+import Terminal from './Terminal.astro';
+import { getTranslation } from '../i18n/index';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = getTranslation(locale);
+
+const demos = {
+  basic: [
+    {
+      title: 'Basic Kill',
+      termTitle: 'slay 3000',
+      lines: [
+        { type: 'prompt', text: '$ slay 3000' },
+        { type: 'output', text: '3000 > node PID 12847 (Dev Server)' },
+        { type: 'warning', text: '  *                    *' },
+        { type: 'error', text: '                       ***' },
+        { type: 'success', text: 'killed PID 12847 on port 3000 [SIGKILL]' },
+      ],
+    },
+    {
+      title: 'Interactive Mode',
+      termTitle: 'slay -i',
+      lines: [
+        { type: 'prompt', text: '$ slay -i' },
+        { type: 'output', text: '' },
+        { type: 'success', text: '  > 3000  node    PID 12847  Dev Server' },
+        { type: 'output', text: '    8080  python  PID 9321   HTTP Alt' },
+        { type: 'output', text: '    5432  pg      PID 4510   PostgreSQL' },
+        { type: 'output', text: '' },
+        { type: 'output', text: '  ↑↓ navigate  space select  enter confirm' },
+      ],
+    },
+    {
+      title: 'Watch Mode',
+      termTitle: 'slay 3000 -w',
+      lines: [
+        { type: 'prompt', text: '$ slay 3000 -w' },
+        { type: 'warning', text: 'watching port 3000...' },
+        { type: 'success', text: 'killed PID 12847 [SIGKILL]' },
+        { type: 'warning', text: 'watching port 3000...' },
+        { type: 'output', text: 'process respawned as PID 12901' },
+        { type: 'success', text: 'killed PID 12901 [SIGKILL]' },
+        { type: 'warning', text: 'watching port 3000...' },
+      ],
+    },
+  ],
+  advanced: [
+    {
+      title: 'Force Kill',
+      termTitle: 'slay 3000 -f',
+      lines: [
+        { type: 'prompt', text: '$ slay 3000 -f' },
+        { type: 'output', text: '3000 > node PID 12847 (Dev Server)' },
+        { type: 'error', text: '  *========================***' },
+        { type: 'success', text: 'killed PID 12847 on port 3000 [SIGKILL]' },
+        { type: 'output', text: 'no confirmation needed (-f)' },
+      ],
+    },
+    {
+      title: 'Graceful Shutdown',
+      termTitle: 'slay 3000 --soft',
+      lines: [
+        { type: 'prompt', text: '$ slay 3000 --soft' },
+        { type: 'output', text: '3000 > node PID 12847 (Dev Server)' },
+        { type: 'warning', text: 'sending SIGTERM...' },
+        { type: 'output', text: 'waiting for graceful exit (5s)...' },
+        { type: 'success', text: 'process exited gracefully [SIGTERM]' },
+      ],
+    },
+    {
+      title: 'Multi-port',
+      termTitle: 'slay 3000 8080 5432',
+      lines: [
+        { type: 'prompt', text: '$ slay 3000 8080 5432' },
+        { type: 'output', text: '3000 > node   PID 12847 (Dev Server)' },
+        { type: 'output', text: '8080 > python PID 9321  (HTTP Alt)' },
+        { type: 'output', text: '5432 > pg     PID 4510  (PostgreSQL)' },
+        { type: 'success', text: 'killed 3 processes on 3 ports' },
+      ],
+    },
+    {
+      title: 'Dry Run',
+      termTitle: 'slay 3000 -n',
+      lines: [
+        { type: 'prompt', text: '$ slay 3000 -n' },
+        { type: 'output', text: '3000 > node PID 12847 (Dev Server)' },
+        { type: 'warning', text: '[dry run] would kill PID 12847' },
+        { type: 'output', text: 'no processes were harmed' },
+      ],
+    },
+    {
+      title: 'Process Tree',
+      termTitle: 'slay 3000 -t',
+      lines: [
+        { type: 'prompt', text: '$ slay 3000 -t' },
+        { type: 'output', text: '3000 > node PID 12847 (Dev Server)' },
+        { type: 'output', text: '  └─ PID 12848 (worker)' },
+        { type: 'output', text: '  └─ PID 12849 (worker)' },
+        { type: 'success', text: 'killed tree: 12849, 12848, 12847' },
+      ],
+    },
+  ],
+  output: [
+    {
+      title: 'JSON Output',
+      termTitle: 'slay 3000 --json',
+      lines: [
+        { type: 'prompt', text: '$ slay 3000 --json' },
+        { type: 'output', text: '{"type":"found","pid":12847,"port":3000}' },
+        { type: 'success', text: '{"type":"killed","pid":12847,"signal":"SIGKILL"}' },
+        { type: 'output', text: '{"type":"summary","killed":1,"failed":0}' },
+      ],
+    },
+    {
+      title: 'UDP Ports',
+      termTitle: 'slay 53 --udp',
+      lines: [
+        { type: 'prompt', text: '$ slay 53 --udp' },
+        { type: 'output', text: '53/udp > mDNSResponder PID 289' },
+        { type: 'warning', text: '  *========================***' },
+        { type: 'success', text: 'killed PID 289 on port 53/udp [SIGKILL]' },
+      ],
+    },
+    {
+      title: 'All Listeners',
+      termTitle: 'slay --all -y',
+      lines: [
+        { type: 'prompt', text: '$ slay --all -y' },
+        { type: 'output', text: 'scanning all ports...' },
+        { type: 'output', text: 'found 5 listening processes' },
+        { type: 'success', text: 'killed 5/5 processes' },
+        { type: 'warning', text: '0 failed' },
+      ],
+    },
+    {
+      title: 'Verbose Mode',
+      termTitle: 'slay 3000 -v',
+      lines: [
+        { type: 'prompt', text: '$ slay 3000 -v' },
+        { type: 'output', text: '[tcp] 3000 > node PID 12847' },
+        { type: 'output', text: '[signal] sending SIGKILL to 12847' },
+        { type: 'output', text: '[timing] kill took 12ms' },
+        { type: 'success', text: 'killed PID 12847 on port 3000 [SIGKILL]' },
+      ],
+    },
+  ],
+};
+
+const typeClassMap: Record<string, string> = {
+  prompt: 'terminal-prompt',
+  output: 'terminal-output',
+  success: 'terminal-success',
+  warning: 'terminal-warning',
+  error: 'terminal-error',
+};
+
+const tabs = [
+  { id: 'basic', label: t('demos.tab.basic'), color: 'var(--green)' },
+  { id: 'advanced', label: t('demos.tab.advanced'), color: 'var(--yellow)' },
+  { id: 'output', label: t('demos.tab.output'), color: 'var(--cyan)' },
+];
+---
+
+<section class="section" id="demos">
+  <div class="container">
+    <h2 class="section-title reveal">{t('demos.heading')} <span class="gradient-text">{t('demos.heading.accent')}</span></h2>
+    <p class="section-subtitle reveal">{t('demos.subtitle')}</p>
+
+    <div class="demo-tabs reveal" role="tablist" aria-label="Demo categories">
+      {tabs.map((tab, i) => (
+        <button
+          role="tab"
+          id={`tab-${tab.id}`}
+          class={`demo-tab-btn ${i === 0 ? 'active' : ''}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          aria-controls={`tabpanel-${tab.id}`}
+          tabindex={i === 0 ? 0 : -1}
+          style={`--tab-color: ${tab.color}`}
+          type="button"
+        >
+          {tab.label}
+        </button>
+      ))}
+    </div>
+
+    {Object.entries(demos).map(([key, demoList], tabIdx) => (
+      <div
+        class={`demo-tab-content ${tabIdx === 0 ? 'active' : ''}`}
+        data-tab={key}
+        role="tabpanel"
+        id={`tabpanel-${key}`}
+        aria-labelledby={`tab-${key}`}
+        tabindex="0"
+      >
+        {demoList.map((demo, i) => (
+          <div class="demo-item reveal" style={`--delay: ${i * 0.1}s`}>
+            <h3 class="demo-label">{demo.title}</h3>
+            <Terminal title={demo.termTitle}>
+              {demo.lines.map((line) => (
+                <div class="terminal-line">
+                  <span class={typeClassMap[line.type]}>{line.text}</span>
+                </div>
+              ))}
+            </Terminal>
+          </div>
+        ))}
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .demo-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 32px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .demo-tab-btn {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.2s, border-color 0.2s;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    background: none;
+    font-family: var(--font-sans);
+  }
+
+  .demo-tab-btn:hover {
+    color: var(--text);
+  }
+
+  .demo-tab-btn.active {
+    color: var(--tab-color, var(--red));
+    border-bottom-color: var(--tab-color, var(--red));
+  }
+
+  .demo-tab-content {
+    display: none;
+  }
+
+  .demo-tab-content.active {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  .demo-item {
+    transition-delay: var(--delay);
+  }
+
+  .demo-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  @media (max-width: 768px) {
+    .demo-tabs {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .demo-tab-btn {
+      padding: 10px 16px;
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+
+    .demo-tab-content.active {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const tablist = document.querySelector('[role="tablist"]');
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+  const panels = document.querySelectorAll<HTMLElement>('[role="tabpanel"]');
+
+  function activateTab(tab: HTMLButtonElement) {
+    tabs.forEach((t) => {
+      t.setAttribute('aria-selected', 'false');
+      t.tabIndex = -1;
+      t.classList.remove('active');
+    });
+    tab.setAttribute('aria-selected', 'true');
+    tab.tabIndex = 0;
+    tab.classList.add('active');
+    tab.focus();
+
+    const targetId = tab.getAttribute('aria-controls');
+    panels.forEach((panel) => {
+      panel.classList.toggle('active', panel.id === targetId);
+    });
+
+    // Re-trigger reveal for newly visible items
+    document.querySelectorAll('.demo-tab-content.active .reveal:not(.visible)').forEach((el) => {
+      el.classList.add('visible');
+    });
+  }
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => activateTab(tab));
+  });
+
+  tablist?.addEventListener('keydown', (e) => {
+    const event = e as KeyboardEvent;
+    const current = tabs.indexOf(document.activeElement as HTMLButtonElement);
+    let next: number | null = null;
+
+    if (event.key === 'ArrowRight') next = (current + 1) % tabs.length;
+    else if (event.key === 'ArrowLeft') next = (current - 1 + tabs.length) % tabs.length;
+    else if (event.key === 'Home') next = 0;
+    else if (event.key === 'End') next = tabs.length - 1;
+
+    if (next !== null) {
+      event.preventDefault();
+      activateTab(tabs[next]);
+    }
+  });
+</script>

@@ -1,0 +1,24 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Hero from '../components/Hero.astro';
+import Features from '../components/Features.astro';
+import Install from '../components/Install.astro';
+import Demo from '../components/Demo.astro';
+import Api from '../components/Api.astro';
+import Footer from '../components/Footer.astro';
+
+const locale = 'en';
+---
+
+<Layout title="slay — Kill processes by port. Beautifully." locale={locale} canonicalUrl="https://slay.fyniti.co.uk/">
+  <Navbar locale={locale} />
+  <main id="main-content">
+    <Hero locale={locale} />
+    <Features locale={locale} />
+    <Install locale={locale} />
+    <Demo locale={locale} />
+    <Api locale={locale} />
+  </main>
+  <Footer locale={locale} />
+</Layout>

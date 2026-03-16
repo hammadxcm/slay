@@ -1,0 +1,118 @@
+---
+import { locales } from '../i18n/index';
+
+interface Props {
+  title: string;
+  description?: string;
+  locale?: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+}
+
+const {
+  title,
+  description = 'Kill processes by port. Beautifully. A fast CLI tool with interactive TUI, watch mode, and zero dependencies.',
+  locale = 'en',
+  canonicalUrl,
+  ogImage = 'https://slay.fyniti.co.uk/favicon.svg',
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+const isRTL = locale === 'ar';
+const siteUrl = 'https://slay.fyniti.co.uk';
+
+const hreflangMap: Record<string, string> = {};
+for (const loc of locales) {
+  hreflangMap[loc] = loc === 'en' ? `${siteUrl}/` : `${siteUrl}/${loc}/`;
+}
+---
+
+<!doctype html>
+<html lang={locale} dir={isRTL ? 'rtl' : 'ltr'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0a0a0f" />
+    <meta name="robots" content="index, follow" />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content="slay" />
+    <meta property="og:locale" content={locale} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    {Object.entries(hreflangMap).map(([loc, url]) => (
+      <link rel="alternate" hreflang={loc} href={url} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={`${siteUrl}/`} />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "slay",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "macOS, Linux, Windows",
+      "description": description,
+      "author": { "@type": "Person", "name": "Hammad Khan" },
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    })} />
+    <script is:inline>
+      (function() {
+        var t = localStorage.getItem('theme');
+        if (t === 'light' || (!t && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
+    <slot />
+    <script>
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          }
+        },
+        { threshold: 0.1 },
+      );
+
+      document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+      // Parallax scroll variable
+      let ticking = false;
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            document.documentElement.style.setProperty('--scroll', String(window.scrollY));
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+  @import '../styles/animations.css';
+  @import '../styles/terminal.css';
+</style>

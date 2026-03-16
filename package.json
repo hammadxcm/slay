@@ -36,7 +36,7 @@
   "bugs": {
     "url": "https://github.com/hammadxcm/slay/issues"
   },
-  "homepage": "https://github.com/hammadxcm/slay#readme",
+  "homepage": "https://slay.fyniti.co.uk",
   "engines": {
     "node": ">=18"
   },

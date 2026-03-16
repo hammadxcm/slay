@@ -42,6 +42,18 @@ jobs:
       - name: Bump version
         run: npm version ${{ inputs.type }}
 
+      - name: Sync jsr.json version
+        run: |
+          VERSION=$(node -p 'require("./package.json").version')
+          node -e "
+            const fs = require('fs');
+            const jsr = JSON.parse(fs.readFileSync('jsr.json', 'utf8'));
+            jsr.version = '$VERSION';
+            fs.writeFileSync('jsr.json', JSON.stringify(jsr, null, 2) + '\n');
+          "
+          git add jsr.json
+          git commit --amend --no-edit
+
       - name: Push commit and tag
         run: git push --follow-tags
 

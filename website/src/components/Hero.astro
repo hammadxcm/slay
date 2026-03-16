@@ -1,0 +1,338 @@
+---
+import Terminal from './Terminal.astro';
+import { getTranslation } from '../i18n/index';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = getTranslation(locale);
+---
+
+<section class="hero" id="hero">
+  <div class="hero-glow"></div>
+  <div class="container hero-grid">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        {t('hero.title.line1')}<br />
+        <span class="gradient-text">{t('hero.title.line2')}</span>
+      </h1>
+      <p class="hero-description">
+        {t('hero.description')}
+      </p>
+      <div class="hero-actions">
+        <a href="#install" class="btn btn--primary">{t('hero.cta.start')}</a>
+        <a
+          href="https://github.com/hammadxcm/slay"
+          class="btn btn--outline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t('hero.cta.github')}
+        </a>
+      </div>
+    </div>
+    <div class="hero-terminal" aria-hidden="true">
+      <Terminal title="slay 3000">
+        <div class="anim-container" id="hero-anim">
+          <div class="anim-line anim-typing">
+            <span class="terminal-prompt">$ </span><span class="terminal-command">slay 3000</span>
+          </div>
+          <div class="anim-line anim-found">
+            <span class="terminal-output">3000 > </span>
+            <span class="terminal-warning">node</span>
+            <span class="terminal-output"> PID 12847 (Dev Server)</span>
+          </div>
+          <div class="anim-line anim-bullet-track">
+            <span class="anim-bullet">*</span>
+          </div>
+          <div class="anim-line anim-explosion">
+            <span class="anim-boom">***</span>
+          </div>
+          <div class="anim-line anim-killed">
+            <span class="terminal-success">killed PID 12847 on port 3000 [SIGKILL]</span>
+          </div>
+        </div>
+      </Terminal>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding: 160px 0 100px;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%) translateY(calc(var(--scroll, 0) * 0.1px));
+    width: 800px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(255, 107, 107, var(--glow-opacity)) 0%, transparent 70%);
+    animation: glow 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+    position: relative;
+  }
+
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+
+  .hero-description {
+    color: var(--text-muted);
+    font-size: 1.15rem;
+    line-height: 1.7;
+    margin-bottom: 36px;
+    max-width: 480px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 28px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  .btn--primary {
+    background: var(--red);
+    color: #fff;
+  }
+
+  .btn--primary:hover {
+    opacity: 1;
+    background: #ff5252;
+    box-shadow: 0 0 24px rgba(255, 107, 107, 0.3);
+  }
+
+  .btn--outline {
+    border: 1px solid var(--border);
+    color: var(--text);
+    background: transparent;
+  }
+
+  .btn--outline:hover {
+    border-color: var(--text-muted);
+    opacity: 1;
+  }
+
+  .hero-terminal {
+    position: relative;
+  }
+
+  /* Animation sequence */
+  .anim-container {
+    --seq-typing: 0s;
+    --seq-found: 1.5s;
+    --seq-bullet: 2.2s;
+    --seq-explode: 2.6s;
+    --seq-killed: 3.2s;
+    --total: 5s;
+  }
+
+  .anim-line {
+    opacity: 0;
+  }
+
+  .anim-typing {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 0;
+    opacity: 1;
+    animation:
+      typing 0.8s steps(10) var(--seq-typing) forwards,
+      blink-caret 0.5s step-end 3;
+    animation-delay: var(--seq-typing);
+    animation-iteration-count: 1, 3;
+    border-right: 2px solid var(--green);
+    animation-fill-mode: forwards;
+  }
+
+  .anim-found {
+    animation: fade-in 0.4s ease var(--seq-found) forwards;
+  }
+
+  .anim-bullet-track {
+    position: relative;
+    height: 1.7em;
+    opacity: 1;
+  }
+
+  .anim-bullet {
+    position: absolute;
+    color: var(--yellow);
+    font-weight: bold;
+    opacity: 0;
+    animation: bullet-fly 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) var(--seq-bullet) forwards;
+  }
+
+  .anim-explosion {
+    text-align: right;
+    padding-right: 10%;
+    animation:
+      fade-in 0.1s ease var(--seq-explode) forwards,
+      explode-in 0.2s ease var(--seq-explode) forwards,
+      explode-out 0.2s ease calc(var(--seq-explode) + 0.3s) forwards;
+  }
+
+  .anim-boom {
+    color: var(--red);
+    font-weight: bold;
+    font-size: 1.2em;
+  }
+
+  .anim-killed {
+    animation: fade-in 0.4s ease var(--seq-killed) forwards;
+  }
+
+  /* Shake on explosion */
+  .anim-container.shake-it {
+    animation: shake 0.4s ease;
+  }
+
+  /* Replay loop */
+  .anim-container {
+    animation: none;
+  }
+
+  @media (max-width: 768px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: 48px;
+      text-align: center;
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+    }
+
+    .hero-description {
+      max-width: none;
+    }
+
+    .hero-actions {
+      justify-content: center;
+    }
+
+    .hero {
+      padding: 120px 0 64px;
+    }
+
+    .hero-terminal {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-title {
+      font-size: 2rem;
+    }
+
+    .hero-description {
+      font-size: 1rem;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      font-size: 0.85rem;
+    }
+  }
+</style>
+
+<script>
+  const scenarios = [
+    {
+      command: 'slay 3000',
+      title: 'slay 3000',
+      found: '3000 > <span class="terminal-warning">node</span><span class="terminal-output"> PID 12847 (Dev Server)</span>',
+      killed: 'killed PID 12847 on port 3000 [SIGKILL]',
+    },
+    {
+      command: 'slay 3000 8080 --soft',
+      title: 'slay --soft',
+      found: '3000 > <span class="terminal-warning">node</span><span class="terminal-output"> PID 12847 (Dev Server)</span>',
+      killed: 'graceful shutdown PID 12847 [SIGTERM → SIGKILL]',
+    },
+    {
+      command: 'slay -i',
+      title: 'slay -i',
+      found: '<span class="terminal-success">  > 3000</span><span class="terminal-output">  node  PID 12847  Dev Server</span>',
+      killed: 'killed 3 processes on 3 ports',
+    },
+  ];
+
+  let scenarioIndex = 0;
+
+  function restartAnimations() {
+    const container = document.getElementById('hero-anim');
+    if (!container) return;
+
+    scenarioIndex = (scenarioIndex + 1) % scenarios.length;
+    const s = scenarios[scenarioIndex];
+
+    const parent = container.parentElement;
+    if (!parent) return;
+
+    const clone = container.cloneNode(true) as HTMLElement;
+    clone.id = 'hero-anim';
+
+    // Update content for new scenario
+    const typing = clone.querySelector('.anim-typing');
+    if (typing) typing.innerHTML = `<span class="terminal-prompt">$ </span><span class="terminal-command">${s.command}</span>`;
+
+    const found = clone.querySelector('.anim-found');
+    if (found) found.innerHTML = s.found;
+
+    const killed = clone.querySelector('.anim-killed');
+    if (killed) killed.innerHTML = `<span class="terminal-success">${s.killed}</span>`;
+
+    parent.replaceChild(clone, container);
+
+    // Shake on explosion
+    setTimeout(() => {
+      const el = document.getElementById('hero-anim');
+      el?.classList.add('shake-it');
+      setTimeout(() => el?.classList.remove('shake-it'), 400);
+    }, 2600);
+  }
+
+  // Respect prefers-reduced-motion
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // Initial shake
+    setTimeout(() => {
+      const el = document.getElementById('hero-anim');
+      el?.classList.add('shake-it');
+      setTimeout(() => el?.classList.remove('shake-it'), 400);
+    }, 2600);
+
+    // Replay every 6s
+    setInterval(restartAnimations, 6000);
+  }
+</script>

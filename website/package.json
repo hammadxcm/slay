@@ -1,0 +1,21 @@
+{
+  "name": "slay-website",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.1",
+    "astro": "^5.9.3"
+  },
+  "devDependencies": {
+    "cheerio": "^1.0.0",
+    "vitest": "^2.1.0"
+  }
+}

@@ -1,0 +1,148 @@
+---
+import { getTranslation } from '../i18n/index';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = getTranslation(locale);
+
+const features = [
+  {
+    icon: '~',
+    title: t('features.tui.title'),
+    description: t('features.tui.desc'),
+    color: 'var(--cyan)',
+  },
+  {
+    icon: '*',
+    title: t('features.animations.title'),
+    description: t('features.animations.desc'),
+    color: 'var(--yellow)',
+  },
+  {
+    icon: '!',
+    title: t('features.graceful.title'),
+    description: t('features.graceful.desc'),
+    color: 'var(--green)',
+  },
+  {
+    icon: '#',
+    title: t('features.watch.title'),
+    description: t('features.watch.desc'),
+    color: 'var(--red)',
+  },
+  {
+    icon: '>',
+    title: t('features.tree.title'),
+    description: t('features.tree.desc'),
+    color: 'var(--cyan)',
+  },
+  {
+    icon: '{}',
+    title: t('features.json.title'),
+    description: t('features.json.desc'),
+    color: 'var(--yellow)',
+  },
+  {
+    icon: '?',
+    title: t('features.labels.title'),
+    description: t('features.labels.desc'),
+    color: 'var(--green)',
+  },
+  {
+    icon: '0',
+    title: t('features.zero.title'),
+    description: t('features.zero.desc'),
+    color: 'var(--red)',
+  },
+  {
+    icon: '/',
+    title: t('features.cross.title'),
+    description: t('features.cross.desc'),
+    color: 'var(--cyan)',
+  },
+];
+---
+
+<section class="section" id="features">
+  <div class="container">
+    <h2 class="section-title reveal">{t('features.heading')} <span class="gradient-text">slay</span>?</h2>
+    <p class="section-subtitle reveal">{t('features.subtitle')}</p>
+    <div class="features-grid">
+      {
+        features.map((feature, i) => (
+          <div class="feature-card reveal" style={`--accent: ${feature.color}; --delay: ${i * 0.06}s`}>
+            <div class="feature-icon" aria-hidden="true">
+              {feature.icon}
+            </div>
+            <h3 class="feature-title">{feature.title}</h3>
+            <p class="feature-description">{feature.description}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .feature-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 12px;
+    padding: 28px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px var(--card-shadow), 0 0 0 1px var(--accent);
+  }
+
+  .feature-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: var(--icon-bg);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+  }
+
+  .feature-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .feature-description {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 1024px) {
+    .features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

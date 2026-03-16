@@ -1,0 +1,129 @@
+---
+import Terminal from './Terminal.astro';
+import { getTranslation } from '../i18n/index';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = getTranslation(locale);
+
+const exports = [
+  { name: 'findByPort(platform, port)', desc: 'Find processes on a specific port' },
+  { name: 'findByPorts(platform, ports)', desc: 'Find processes on multiple ports' },
+  { name: 'findAllListening(platform)', desc: 'Find all listening processes' },
+  { name: 'killProcess(platform, proc)', desc: 'Kill a single process' },
+  { name: 'killAll(platform, procs)', desc: 'Kill multiple processes' },
+  { name: 'enrichLabel(proc)', desc: 'Add smart labels to a process' },
+];
+---
+
+<section class="section" id="api">
+  <div class="container">
+    <h2 class="section-title reveal">{t('api.heading')} <span class="gradient-text">{t('api.heading.accent')}</span></h2>
+    <p class="section-subtitle reveal">{t('api.subtitle')}</p>
+    <div class="api-grid">
+      <div class="api-info reveal">
+        <h3 class="api-heading">{t('api.exports')}</h3>
+        <ul class="api-list">
+          {
+            exports.map((exp) => (
+              <li class="api-item">
+                <code class="api-name">{exp.name}</code>
+                <span class="api-desc">{exp.desc}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="api-code reveal">
+        <Terminal title="api.ts">
+          <div class="terminal-line">
+            <span class="terminal-output">import</span>
+            <span class="terminal-success"> {'{ findByPort, killProcess, platform }'}</span>
+          </div>
+          <div class="terminal-line">
+            <span class="terminal-output">  from</span>
+            <span class="terminal-warning"> 'slay-port'</span><span class="terminal-output">;</span>
+          </div>
+          <div class="terminal-line">&nbsp;</div>
+          <div class="terminal-line">
+            <span class="terminal-output">const procs = await</span>
+            <span class="terminal-success"> findByPort</span><span class="terminal-output">(platform, 3000);</span>
+          </div>
+          <div class="terminal-line">&nbsp;</div>
+          <div class="terminal-line">
+            <span class="terminal-output">for (const proc of procs) {'{'}</span>
+          </div>
+          <div class="terminal-line">
+            <span class="terminal-output">  const result = await</span>
+            <span class="terminal-success"> killProcess</span><span class="terminal-output">(platform, proc);</span>
+          </div>
+          <div class="terminal-line">
+            <span class="terminal-output">  console.log(</span>
+            <span class="terminal-warning">`Killed ${'${result.pid}'} on ${'${result.port}'}`</span>
+            <span class="terminal-output">);</span>
+          </div>
+          <div class="terminal-line"><span class="terminal-output">{'}'}</span></div>
+        </Terminal>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .api-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .api-heading {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+
+  .api-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .api-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .api-name {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--cyan);
+    background: rgba(34, 211, 238, 0.08);
+    padding: 4px 8px;
+    border-radius: 6px;
+    width: fit-content;
+  }
+
+  .api-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    padding-left: 8px;
+  }
+
+  @media (max-width: 768px) {
+    .api-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .api-code {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+</style>
