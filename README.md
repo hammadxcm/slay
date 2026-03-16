@@ -8,6 +8,7 @@
   <a href="https://slay.fyniti.co.uk"><img src="https://img.shields.io/badge/Website-slay--port-ff6b6b" alt="Website"></a>
   <a href="https://github.com/hammadxcm/slay/actions/workflows/ci.yml"><img src="https://github.com/hammadxcm/slay/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://www.npmjs.com/package/slay-port"><img src="https://img.shields.io/npm/v/slay-port.svg" alt="npm version"></a>
+  <a href="https://jsr.io/@hammadxcm/slay-port"><img src="https://jsr.io/badges/@hammadxcm/slay-port" alt="JSR"></a>
   <a href="https://www.npmjs.com/package/slay-port"><img src="https://img.shields.io/npm/dm/slay-port.svg" alt="npm downloads"></a>
   <a href="https://github.com/hammadxcm/slay/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/slay-port.svg" alt="license"></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/node/v/slay-port.svg" alt="node version"></a>
@@ -16,20 +17,35 @@
 
 ---
 
-## Quick Start
+## Install
 
 ```bash
+# npm
 npx slay-port 3000
+npm i -g slay-port
+
+# pnpm
+pnpm dlx slay-port 3000
+pnpm add -g slay-port
+
+# yarn
+yarn dlx slay-port 3000
+yarn global add slay-port
+
+# bun
+bunx slay-port 3000
+bun add -g slay-port
+
+# Homebrew (macOS/Linux)
+brew install hammadxcm/slay/slay-port
+
+# Standalone binary (no runtime needed)
+# Download from GitHub Releases: https://github.com/hammadxcm/slay/releases
 ```
 
 Full docs & interactive demos at **[slay.fyniti.co.uk](https://slay.fyniti.co.uk)**
 
-Or install globally:
-
-```bash
-npm i -g slay-port
-slay 3000
-```
+Also available on **[JSR](https://jsr.io/@hammadxcm/slay-port)** for Deno and modern TypeScript projects.
 
 <!-- why -->
 
