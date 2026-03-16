@@ -33,6 +33,12 @@ const managers = [
     quick: 'bunx slay-port 3000',
     global: 'bun add -g slay-port && slay 3000',
   },
+  {
+    id: 'brew',
+    label: 'Homebrew',
+    quick: 'brew install hammadxcm/slay/slay-port',
+    global: 'brew install hammadxcm/slay/slay-port && slay 3000',
+  },
 ];
 
 const apiCommand = "import { findByPort, killProcess } from 'slay-port'";
