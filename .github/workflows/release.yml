@@ -91,8 +91,8 @@ jobs:
           path: ${{ matrix.artifact }}
 
   release:
-    needs: [publish-npm, binaries]
-    if: always() && needs.publish-npm.result == 'success' && needs.binaries.result == 'success'
+    needs: [publish-npm, publish-jsr, binaries]
+    if: always() && needs.binaries.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v8
