@@ -5,7 +5,8 @@ export default {
   'nav.api': 'API',
   'hero.title.line1': 'Kill processes by port.',
   'hero.title.line2': 'Beautifully.',
-  'hero.description': 'A blazing-fast CLI that finds and kills processes hogging your ports. Interactive TUI, watch mode, process trees, and zero dependencies.',
+  'hero.description':
+    'A blazing-fast CLI that finds and kills processes hogging your ports. Interactive TUI, watch mode, process trees, and zero dependencies.',
   'hero.cta.start': 'Get Started',
   'hero.cta.github': 'GitHub',
   'features.heading': 'Why',
@@ -15,7 +16,8 @@ export default {
   'features.animations.title': 'Kill Animations',
   'features.animations.desc': 'Watch a bullet fly across your terminal when a process gets slayed.',
   'features.graceful.title': 'Graceful Shutdown',
-  'features.graceful.desc': 'SIGTERM first, escalate to SIGKILL only if the process refuses to die.',
+  'features.graceful.desc':
+    'SIGTERM first, escalate to SIGKILL only if the process refuses to die.',
   'features.watch.title': 'Watch Mode',
   'features.watch.desc': 'Keep polling and auto-kill processes that respawn on your port.',
   'features.tree.title': 'Process Trees',

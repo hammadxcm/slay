@@ -5,7 +5,8 @@ export default {
   'nav.api': 'API',
   'hero.title.line1': 'পোর্ট অনুযায়ী প্রসেস বন্ধ করুন।',
   'hero.title.line2': 'সুন্দরভাবে।',
-  'hero.description': 'একটি অতি-দ্রুত CLI যা আপনার পোর্ট দখল করা প্রসেস খুঁজে বের করে এবং বন্ধ করে। ইন্টারেক্টিভ TUI, ওয়াচ মোড, প্রসেস ট্রি এবং শূন্য ডিপেন্ডেন্সি।',
+  'hero.description':
+    'একটি অতি-দ্রুত CLI যা আপনার পোর্ট দখল করা প্রসেস খুঁজে বের করে এবং বন্ধ করে। ইন্টারেক্টিভ TUI, ওয়াচ মোড, প্রসেস ট্রি এবং শূন্য ডিপেন্ডেন্সি।',
   'hero.cta.start': 'শুরু করুন',
   'hero.cta.github': 'GitHub',
   'features.heading': 'কেন',
@@ -23,7 +24,8 @@ export default {
   'features.json.title': 'JSON আউটপুট',
   'features.json.desc': 'স্ক্রিপ্টিং, CI পাইপলাইন এবং অটোমেশনের জন্য NDJSON কে jq তে পাইপ করুন।',
   'features.labels.title': 'স্মার্ট লেবেল',
-  'features.labels.desc': 'Node, Python, Docker, PostgreSQL, Vite এবং ২০+ আরও স্বয়ংক্রিয়ভাবে শনাক্ত করে।',
+  'features.labels.desc':
+    'Node, Python, Docker, PostgreSQL, Vite এবং ২০+ আরও স্বয়ংক্রিয়ভাবে শনাক্ত করে।',
   'features.zero.title': 'শূন্য ডিপেন্ডেন্সি',
   'features.zero.desc': 'কোনো অতিরিক্ত নেই। শুধু যা দরকার তাই শিপ করে। এক সেকেন্ডের মধ্যে ইনস্টল।',
   'features.cross.title': 'ক্রস-প্ল্যাটফর্ম',

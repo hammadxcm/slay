@@ -5,7 +5,8 @@ export default {
   'nav.api': 'API',
   'hero.title.line1': 'Mata procesos por puerto.',
   'hero.title.line2': 'Con estilo.',
-  'hero.description': 'Un CLI ultrarrápido que encuentra y mata procesos que ocupan tus puertos. TUI interactivo, modo vigilancia, árboles de procesos y cero dependencias.',
+  'hero.description':
+    'Un CLI ultrarrápido que encuentra y mata procesos que ocupan tus puertos. TUI interactivo, modo vigilancia, árboles de procesos y cero dependencias.',
   'hero.cta.start': 'Comenzar',
   'hero.cta.github': 'GitHub',
   'features.heading': 'Por qué',
@@ -15,17 +16,21 @@ export default {
   'features.animations.title': 'Animaciones de Kill',
   'features.animations.desc': 'Mira una bala volar por tu terminal cuando un proceso es eliminado.',
   'features.graceful.title': 'Apagado Elegante',
-  'features.graceful.desc': 'Primero SIGTERM, escala a SIGKILL solo si el proceso se niega a morir.',
+  'features.graceful.desc':
+    'Primero SIGTERM, escala a SIGKILL solo si el proceso se niega a morir.',
   'features.watch.title': 'Modo Vigilancia',
-  'features.watch.desc': 'Sigue sondeando y mata automáticamente procesos que reaparecen en tu puerto.',
+  'features.watch.desc':
+    'Sigue sondeando y mata automáticamente procesos que reaparecen en tu puerto.',
   'features.tree.title': 'Árboles de Procesos',
   'features.tree.desc': 'Mata todo el árbol de procesos, hijos primero, para un cierre limpio.',
   'features.json.title': 'Salida JSON',
   'features.json.desc': 'Envía NDJSON a jq para scripting, pipelines de CI y automatización.',
   'features.labels.title': 'Etiquetas Inteligentes',
-  'features.labels.desc': 'Detecta automáticamente Node, Python, Docker, PostgreSQL, Vite y más de 20 más.',
+  'features.labels.desc':
+    'Detecta automáticamente Node, Python, Docker, PostgreSQL, Vite y más de 20 más.',
   'features.zero.title': 'Cero Dependencias',
-  'features.zero.desc': 'Sin excesos. Solo incluye lo necesario. Se instala en menos de un segundo.',
+  'features.zero.desc':
+    'Sin excesos. Solo incluye lo necesario. Se instala en menos de un segundo.',
   'features.cross.title': 'Multiplataforma',
   'features.cross.desc': 'Funciona en macOS (lsof), Linux (lsof) y Windows (netstat + taskkill).',
   'install.heading': 'Cómo',

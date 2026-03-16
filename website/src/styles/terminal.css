@@ -24,9 +24,15 @@
   border-radius: 50%;
 }
 
-.terminal-dot--red { background: #ff5f57; }
-.terminal-dot--yellow { background: #febc2e; }
-.terminal-dot--green { background: #28c840; }
+.terminal-dot--red {
+  background: #ff5f57;
+}
+.terminal-dot--yellow {
+  background: #febc2e;
+}
+.terminal-dot--green {
+  background: #28c840;
+}
 
 .terminal-title {
   flex: 1;
@@ -43,7 +49,7 @@
 }
 
 .terminal-body::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;

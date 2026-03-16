@@ -5,29 +5,38 @@ export default {
   'nav.api': 'API',
   'hero.title.line1': 'Tuez les processus par port.',
   'hero.title.line2': 'Avec élégance.',
-  'hero.description': 'Un CLI ultra-rapide qui trouve et tue les processus qui occupent vos ports. TUI interactif, mode surveillance, arbres de processus et zéro dépendance.',
+  'hero.description':
+    'Un CLI ultra-rapide qui trouve et tue les processus qui occupent vos ports. TUI interactif, mode surveillance, arbres de processus et zéro dépendance.',
   'hero.cta.start': 'Commencer',
   'hero.cta.github': 'GitHub',
   'features.heading': 'Pourquoi',
-  'features.subtitle': 'Tout ce qu\'il faut pour récupérer vos ports.',
+  'features.subtitle': "Tout ce qu'il faut pour récupérer vos ports.",
   'features.tui.title': 'TUI Interactif',
-  'features.tui.desc': 'Recherchez, parcourez et sélectionnez plusieurs processus avec la navigation au clavier.',
+  'features.tui.desc':
+    'Recherchez, parcourez et sélectionnez plusieurs processus avec la navigation au clavier.',
   'features.animations.title': 'Animations de Kill',
-  'features.animations.desc': 'Regardez une balle traverser votre terminal quand un processus est éliminé.',
+  'features.animations.desc':
+    'Regardez une balle traverser votre terminal quand un processus est éliminé.',
   'features.graceful.title': 'Arrêt Gracieux',
-  'features.graceful.desc': 'SIGTERM d\'abord, escalade vers SIGKILL uniquement si le processus refuse de s\'arrêter.',
+  'features.graceful.desc':
+    "SIGTERM d'abord, escalade vers SIGKILL uniquement si le processus refuse de s'arrêter.",
   'features.watch.title': 'Mode Surveillance',
-  'features.watch.desc': 'Continuez à sonder et tuez automatiquement les processus qui réapparaissent sur votre port.',
+  'features.watch.desc':
+    'Continuez à sonder et tuez automatiquement les processus qui réapparaissent sur votre port.',
   'features.tree.title': 'Arbres de Processus',
-  'features.tree.desc': 'Tuez l\'arbre de processus entier, enfants d\'abord, pour un arrêt propre.',
+  'features.tree.desc': "Tuez l'arbre de processus entier, enfants d'abord, pour un arrêt propre.",
   'features.json.title': 'Sortie JSON',
-  'features.json.desc': 'Envoyez du NDJSON vers jq pour le scripting, les pipelines CI et l\'automatisation.',
+  'features.json.desc':
+    "Envoyez du NDJSON vers jq pour le scripting, les pipelines CI et l'automatisation.",
   'features.labels.title': 'Labels Intelligents',
-  'features.labels.desc': 'Détecte automatiquement Node, Python, Docker, PostgreSQL, Vite et plus de 20 autres.',
+  'features.labels.desc':
+    'Détecte automatiquement Node, Python, Docker, PostgreSQL, Vite et plus de 20 autres.',
   'features.zero.title': 'Zéro Dépendance',
-  'features.zero.desc': 'Pas de superflu. N\'embarque que le nécessaire. S\'installe en moins d\'une seconde.',
+  'features.zero.desc':
+    "Pas de superflu. N'embarque que le nécessaire. S'installe en moins d'une seconde.",
   'features.cross.title': 'Multiplateforme',
-  'features.cross.desc': 'Fonctionne sur macOS (lsof), Linux (lsof) et Windows (netstat + taskkill).',
+  'features.cross.desc':
+    'Fonctionne sur macOS (lsof), Linux (lsof) et Windows (netstat + taskkill).',
   'install.heading': 'Pour',
   'install.heading.accent': 'commencer',
   'install.subtitle': 'Opérationnel en une seule commande.',
@@ -37,7 +46,7 @@ export default {
   'install.pm.label': 'Gestionnaire de paquets',
   'demos.heading': 'Voyez-le en',
   'demos.heading.accent': 'action',
-  'demos.subtitle': 'Douze façons d\'éliminer.',
+  'demos.subtitle': "Douze façons d'éliminer.",
   'demos.tab.basic': 'Basique',
   'demos.tab.advanced': 'Avancé',
   'demos.tab.output': 'Sortie',

@@ -10,8 +10,8 @@
   --green: #51cf66;
   --yellow: #ffd43b;
   --cyan: #22d3ee;
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
   --max-width: 1200px;
   --nav-height: 64px;
   --nav-bg: rgba(10, 10, 15, 0.8);

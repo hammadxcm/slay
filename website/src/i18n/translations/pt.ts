@@ -5,25 +5,32 @@ export default {
   'nav.api': 'API',
   'hero.title.line1': 'Mate processos por porta.',
   'hero.title.line2': 'Com estilo.',
-  'hero.description': 'Um CLI ultrarrápido que encontra e mata processos ocupando suas portas. TUI interativo, modo vigilância, árvores de processos e zero dependências.',
+  'hero.description':
+    'Um CLI ultrarrápido que encontra e mata processos ocupando suas portas. TUI interativo, modo vigilância, árvores de processos e zero dependências.',
   'hero.cta.start': 'Começar',
   'hero.cta.github': 'GitHub',
   'features.heading': 'Por que',
   'features.subtitle': 'Tudo o que você precisa para recuperar suas portas.',
   'features.tui.title': 'TUI Interativo',
-  'features.tui.desc': 'Pesquise, navegue e selecione múltiplos processos com navegação por teclado.',
+  'features.tui.desc':
+    'Pesquise, navegue e selecione múltiplos processos com navegação por teclado.',
   'features.animations.title': 'Animações de Kill',
-  'features.animations.desc': 'Veja uma bala voar pelo seu terminal quando um processo é eliminado.',
+  'features.animations.desc':
+    'Veja uma bala voar pelo seu terminal quando um processo é eliminado.',
   'features.graceful.title': 'Encerramento Gracioso',
-  'features.graceful.desc': 'SIGTERM primeiro, escala para SIGKILL apenas se o processo se recusar a parar.',
+  'features.graceful.desc':
+    'SIGTERM primeiro, escala para SIGKILL apenas se o processo se recusar a parar.',
   'features.watch.title': 'Modo Vigilância',
-  'features.watch.desc': 'Continue monitorando e mate automaticamente processos que reaparecem na sua porta.',
+  'features.watch.desc':
+    'Continue monitorando e mate automaticamente processos que reaparecem na sua porta.',
   'features.tree.title': 'Árvores de Processos',
-  'features.tree.desc': 'Mate toda a árvore de processos, filhos primeiro, para um encerramento limpo.',
+  'features.tree.desc':
+    'Mate toda a árvore de processos, filhos primeiro, para um encerramento limpo.',
   'features.json.title': 'Saída JSON',
   'features.json.desc': 'Envie NDJSON para jq para scripting, pipelines de CI e automação.',
   'features.labels.title': 'Labels Inteligentes',
-  'features.labels.desc': 'Detecta automaticamente Node, Python, Docker, PostgreSQL, Vite e mais de 20 outros.',
+  'features.labels.desc':
+    'Detecta automaticamente Node, Python, Docker, PostgreSQL, Vite e mais de 20 outros.',
   'features.zero.title': 'Zero Dependências',
   'features.zero.desc': 'Sem excessos. Envia apenas o necessário. Instala em menos de um segundo.',
   'features.cross.title': 'Multiplataforma',

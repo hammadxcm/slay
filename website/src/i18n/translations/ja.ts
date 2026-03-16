@@ -5,7 +5,8 @@ export default {
   'nav.api': 'API',
   'hero.title.line1': 'ポートでプロセスを終了。',
   'hero.title.line2': '美しく。',
-  'hero.description': 'ポートを占有するプロセスを見つけて終了する超高速 CLI。インタラクティブ TUI、ウォッチモード、プロセスツリー、依存関係ゼロ。',
+  'hero.description':
+    'ポートを占有するプロセスを見つけて終了する超高速 CLI。インタラクティブ TUI、ウォッチモード、プロセスツリー、依存関係ゼロ。',
   'hero.cta.start': '始める',
   'hero.cta.github': 'GitHub',
   'features.heading': 'なぜ',
@@ -15,13 +16,15 @@ export default {
   'features.animations.title': 'キルアニメーション',
   'features.animations.desc': 'プロセスが終了されるとき、ターミナルを弾丸が飛ぶのを見届けよう。',
   'features.graceful.title': 'グレースフルシャットダウン',
-  'features.graceful.desc': 'まず SIGTERM、プロセスが終了を拒否した場合のみ SIGKILL にエスカレート。',
+  'features.graceful.desc':
+    'まず SIGTERM、プロセスが終了を拒否した場合のみ SIGKILL にエスカレート。',
   'features.watch.title': 'ウォッチモード',
   'features.watch.desc': 'ポーリングを続け、ポートで復活するプロセスを自動キル。',
   'features.tree.title': 'プロセスツリー',
   'features.tree.desc': 'プロセスツリー全体を終了。子プロセスから先に、クリーンなティアダウン。',
   'features.json.title': 'JSON 出力',
-  'features.json.desc': 'NDJSON を jq にパイプして、スクリプティング、CI パイプライン、自動化に活用。',
+  'features.json.desc':
+    'NDJSON を jq にパイプして、スクリプティング、CI パイプライン、自動化に活用。',
   'features.labels.title': 'スマートラベル',
   'features.labels.desc': 'Node、Python、Docker、PostgreSQL、Vite など 20 以上を自動検出。',
   'features.zero.title': '依存関係ゼロ',

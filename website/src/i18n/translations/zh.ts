@@ -5,7 +5,8 @@ export default {
   'nav.api': 'API',
   'hero.title.line1': '按端口终止进程。',
   'hero.title.line2': '优雅至极。',
-  'hero.description': '一个极速 CLI，可查找并终止占用端口的进程。交互式 TUI、监视模式、进程树，零依赖。',
+  'hero.description':
+    '一个极速 CLI，可查找并终止占用端口的进程。交互式 TUI、监视模式、进程树，零依赖。',
   'hero.cta.start': '快速开始',
   'hero.cta.github': 'GitHub',
   'features.heading': '为什么选择',

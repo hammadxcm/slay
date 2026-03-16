@@ -1,18 +1,16 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Navbar from '../../components/Navbar.astro';
-import Hero from '../../components/Hero.astro';
-import Features from '../../components/Features.astro';
-import Install from '../../components/Install.astro';
-import Demo from '../../components/Demo.astro';
 import Api from '../../components/Api.astro';
+import Demo from '../../components/Demo.astro';
+import Features from '../../components/Features.astro';
 import Footer from '../../components/Footer.astro';
+import Hero from '../../components/Hero.astro';
+import Install from '../../components/Install.astro';
+import Navbar from '../../components/Navbar.astro';
 import { locales } from '../../i18n/index';
+import Layout from '../../layouts/Layout.astro';
 
 export function getStaticPaths() {
-  return locales
-    .filter((l) => l !== 'en')
-    .map((locale) => ({ params: { locale } }));
+  return locales.filter((l) => l !== 'en').map((locale) => ({ params: { locale } }));
 }
 
 const { locale } = Astro.params;

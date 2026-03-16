@@ -5,7 +5,8 @@ export default {
   'nav.api': 'API',
   'hero.title.line1': 'पोर्ट से प्रोसेस बंद करें।',
   'hero.title.line2': 'खूबसूरती से।',
-  'hero.description': 'एक तेज़ CLI जो आपके पोर्ट पर कब्जा करने वाली प्रोसेस को ढूंढकर बंद करता है। इंटरैक्टिव TUI, वॉच मोड, प्रोसेस ट्री, और शून्य डिपेंडेंसी।',
+  'hero.description':
+    'एक तेज़ CLI जो आपके पोर्ट पर कब्जा करने वाली प्रोसेस को ढूंढकर बंद करता है। इंटरैक्टिव TUI, वॉच मोड, प्रोसेस ट्री, और शून्य डिपेंडेंसी।',
   'hero.cta.start': 'शुरू करें',
   'hero.cta.github': 'GitHub',
   'features.heading': 'क्यों',
@@ -27,7 +28,8 @@ export default {
   'features.zero.title': 'शून्य डिपेंडेंसी',
   'features.zero.desc': 'कोई ब्लोट नहीं। केवल जो ज़रूरी है वही शिप करता है। एक सेकंड में इंस्टॉल।',
   'features.cross.title': 'क्रॉस-प्लेटफ़ॉर्म',
-  'features.cross.desc': 'macOS (lsof), Linux (lsof), और Windows (netstat + taskkill) पर काम करता है।',
+  'features.cross.desc':
+    'macOS (lsof), Linux (lsof), और Windows (netstat + taskkill) पर काम करता है।',
   'install.heading': 'शुरू',
   'install.heading.accent': 'करें',
   'install.subtitle': 'एक कमांड में तैयार।',

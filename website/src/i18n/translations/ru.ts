@@ -5,27 +5,34 @@ export default {
   'nav.api': 'API',
   'hero.title.line1': 'Убивайте процессы по порту.',
   'hero.title.line2': 'Красиво.',
-  'hero.description': 'Молниеносный CLI, который находит и убивает процессы, занимающие ваши порты. Интерактивный TUI, режим наблюдения, деревья процессов и ноль зависимостей.',
+  'hero.description':
+    'Молниеносный CLI, который находит и убивает процессы, занимающие ваши порты. Интерактивный TUI, режим наблюдения, деревья процессов и ноль зависимостей.',
   'hero.cta.start': 'Начать',
   'hero.cta.github': 'GitHub',
   'features.heading': 'Почему',
   'features.subtitle': 'Всё, что нужно для освобождения ваших портов.',
   'features.tui.title': 'Интерактивный TUI',
-  'features.tui.desc': 'Ищите, просматривайте и выбирайте несколько процессов с помощью клавиатурной навигации.',
+  'features.tui.desc':
+    'Ищите, просматривайте и выбирайте несколько процессов с помощью клавиатурной навигации.',
   'features.animations.title': 'Анимации Kill',
-  'features.animations.desc': 'Смотрите, как пуля летит через ваш терминал, когда процесс уничтожается.',
+  'features.animations.desc':
+    'Смотрите, как пуля летит через ваш терминал, когда процесс уничтожается.',
   'features.graceful.title': 'Мягкое Завершение',
-  'features.graceful.desc': 'Сначала SIGTERM, эскалация до SIGKILL только если процесс отказывается завершаться.',
+  'features.graceful.desc':
+    'Сначала SIGTERM, эскалация до SIGKILL только если процесс отказывается завершаться.',
   'features.watch.title': 'Режим Наблюдения',
-  'features.watch.desc': 'Продолжайте опрашивать и автоматически убивайте процессы, которые возрождаются на вашем порту.',
+  'features.watch.desc':
+    'Продолжайте опрашивать и автоматически убивайте процессы, которые возрождаются на вашем порту.',
   'features.tree.title': 'Деревья Процессов',
   'features.tree.desc': 'Убивайте всё дерево процессов, сначала дочерние, для чистого завершения.',
   'features.json.title': 'Вывод JSON',
   'features.json.desc': 'Передавайте NDJSON в jq для скриптов, CI пайплайнов и автоматизации.',
   'features.labels.title': 'Умные Метки',
-  'features.labels.desc': 'Автоматически распознаёт Node, Python, Docker, PostgreSQL, Vite и более 20 других.',
+  'features.labels.desc':
+    'Автоматически распознаёт Node, Python, Docker, PostgreSQL, Vite и более 20 других.',
   'features.zero.title': 'Ноль Зависимостей',
-  'features.zero.desc': 'Без лишнего. Поставляет только необходимое. Устанавливается менее чем за секунду.',
+  'features.zero.desc':
+    'Без лишнего. Поставляет только необходимое. Устанавливается менее чем за секунду.',
   'features.cross.title': 'Кроссплатформенный',
   'features.cross.desc': 'Работает на macOS (lsof), Linux (lsof) и Windows (netstat + taskkill).',
   'install.heading': 'Начало',
