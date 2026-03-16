@@ -24,7 +24,12 @@
     "check": "biome check .",
     "format": "biome format --write .",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,js,json}": ["biome check --no-errors-on-unmatched"],
+    "*.{astro,css}": ["biome format --no-errors-on-unmatched"]
   },
   "keywords": ["kill", "port", "process", "cli", "slay", "kill-port", "terminal"],
   "author": "Hammad Khan <hammadkhanxcm@gmail.com> (https://github.com/hammadxcm)",
@@ -44,6 +49,8 @@
     "@biomejs/biome": "^1.9.0",
     "@types/node": "^25.3.3",
     "@vitest/coverage-v8": "^2.1.9",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "picocolors": "^1.1.0",
     "tsup": "^8.3.0",
     "typescript": "^5.6.0",
