@@ -107,6 +107,7 @@ jobs:
 
   update-homebrew:
     needs: release
+    if: always() && needs.release.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
