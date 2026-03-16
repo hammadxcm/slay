@@ -42,7 +42,7 @@ jobs:
       - name: Bump version
         run: npm version ${{ inputs.type }}
 
-      - name: Sync jsr.json version
+      - name: Sync jsr.json version and re-tag
         run: |
           VERSION=$(node -p 'require("./package.json").version')
           node -e "
@@ -53,6 +53,7 @@ jobs:
           "
           git add jsr.json
           git commit --amend --no-edit
+          git tag -f "v${VERSION}"
 
       - name: Push commit and tag
         run: git push --follow-tags
