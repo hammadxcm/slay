@@ -1,6 +1,6 @@
 {
   "name": "slay-port",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Kill processes by port. Beautifully.",
   "type": "module",
   "bin": {
@@ -14,7 +14,9 @@
     "./cli": "./dist/index.js"
   },
   "types": "./dist/api.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -26,7 +28,15 @@
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
-  "keywords": ["kill", "port", "process", "cli", "slay", "kill-port", "terminal"],
+  "keywords": [
+    "kill",
+    "port",
+    "process",
+    "cli",
+    "slay",
+    "kill-port",
+    "terminal"
+  ],
   "author": "Hammad Khan <hammadkhanxcm@gmail.com> (https://github.com/hammadxcm)",
   "license": "MIT",
   "repository": {
