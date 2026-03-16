@@ -1,5 +1,5 @@
 {
-  "name": "@hammadxcm/slay-port",
+  "name": "@hammadxcm/slay",
   "version": "0.1.2",
   "exports": {
     ".": "./src/api.ts"
