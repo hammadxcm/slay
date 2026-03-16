@@ -51,4 +51,11 @@ export default {
   'footer.tagline': 'ポートでプロセスを終了。美しく。',
   'footer.made': 'Hammad Khan 作',
   'footer.star': 'GitHub でスターする',
+  'features.profiles.title': 'プロファイルプリセット',
+  'features.profiles.desc': 'ポートの組み合わせを名前付きプロファイルとして保存。',
+  'features.ranges.title': 'ポート範囲',
+  'features.ranges.desc': 'slay 8000-8010 でポート範囲を終了。',
+  'features.portinfo.title': 'ポート情報',
+  'features.portinfo.desc': '終了せずにポートを検査。PID、CPU、メモリを表示。',
+  'demos.tab.profiles': 'プロファイル',
 } as Record<string, string>;

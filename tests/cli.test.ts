@@ -70,6 +70,7 @@ describe('parseArgs', () => {
       tree: false,
       protocol: 'tcp',
       help: false,
+      subArgs: [],
     });
   });
 
@@ -111,6 +112,73 @@ describe('parseArgs', () => {
   it('parses --udp', () => {
     expect(parseArgs(['node', 'slay', '3000', '--udp']).protocol).toBe('udp');
   });
+
+  it('parses port range 8000-8010', () => {
+    const opts = parseArgs(['node', 'slay', '8000-8010']);
+    expect(opts.ports).toHaveLength(11);
+    expect(opts.ports[0]).toBe(8000);
+    expect(opts.ports[10]).toBe(8010);
+  });
+
+  it('parses single-port range 3000-3000', () => {
+    const opts = parseArgs(['node', 'slay', '3000-3000']);
+    expect(opts.ports).toEqual([3000]);
+  });
+
+  it('throws on invalid range (start > end)', () => {
+    expect(() => parseArgs(['node', 'slay', '8010-8000'])).toThrow('start must be');
+  });
+
+  it('throws on range too large', () => {
+    expect(() => parseArgs(['node', 'slay', '1-65535'])).toThrow('Range too large');
+  });
+
+  it('throws on invalid port in range', () => {
+    expect(() => parseArgs(['node', 'slay', '0-100'])).toThrow('Invalid port');
+  });
+
+  it('parses port range mixed with single ports', () => {
+    const opts = parseArgs(['node', 'slay', '3000', '8000-8002']);
+    expect(opts.ports).toEqual([3000, 8000, 8001, 8002]);
+  });
+
+  it('parses --profile flag', () => {
+    const opts = parseArgs(['node', 'slay', '--profile', 'dev']);
+    expect(opts.profile).toBe('dev');
+  });
+
+  it('throws when --profile has no name', () => {
+    expect(() => parseArgs(['node', 'slay', '--profile'])).toThrow('--profile requires a name');
+  });
+
+  it('parses --profile with additional flags', () => {
+    const opts = parseArgs(['node', 'slay', '--profile', 'dev', '--force']);
+    expect(opts.profile).toBe('dev');
+    expect(opts.force).toBe(true);
+  });
+
+  it('detects init subcommand', () => {
+    const opts = parseArgs(['node', 'slay', 'init']);
+    expect(opts.command).toBe('init');
+  });
+
+  it('detects profile subcommand', () => {
+    const opts = parseArgs(['node', 'slay', 'profile', 'list']);
+    expect(opts.command).toBe('profile');
+    expect(opts.subArgs).toEqual(['list']);
+  });
+
+  it('detects info subcommand with ports', () => {
+    const opts = parseArgs(['node', 'slay', 'info', '3000', '8080']);
+    expect(opts.command).toBe('info');
+    expect(opts.ports).toEqual([3000, 8080]);
+  });
+
+  it('detects info subcommand with port range', () => {
+    const opts = parseArgs(['node', 'slay', 'info', '8000-8005']);
+    expect(opts.command).toBe('info');
+    expect(opts.ports).toHaveLength(6);
+  });
 });
 
 describe('validateOptions', () => {
@@ -136,6 +204,16 @@ describe('validateOptions', () => {
 
   it('passes with --help (no ports needed)', () => {
     const opts = parseArgs(['node', 'slay', '--help']);
+    expect(() => validateOptions(opts)).not.toThrow();
+  });
+
+  it('passes with --profile (no ports needed)', () => {
+    const opts = parseArgs(['node', 'slay', '--profile', 'dev']);
+    expect(() => validateOptions(opts)).not.toThrow();
+  });
+
+  it('passes with subcommand', () => {
+    const opts = parseArgs(['node', 'slay', 'init']);
     expect(() => validateOptions(opts)).not.toThrow();
   });
 });

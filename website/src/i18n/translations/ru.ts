@@ -55,4 +55,11 @@ export default {
   'footer.tagline': 'Убивайте процессы по порту. Красиво.',
   'footer.made': 'Создано Hammad Khan',
   'footer.star': 'Звезда на GitHub',
+  'features.profiles.title': 'Предустановки профилей',
+  'features.profiles.desc': 'Сохраняйте комбинации портов как именованные профили.',
+  'features.ranges.title': 'Диапазоны портов',
+  'features.ranges.desc': 'Убивайте диапазон портов с помощью slay 8000-8010.',
+  'features.portinfo.title': 'Информация о порте',
+  'features.portinfo.desc': 'Проверяйте порты без завершения. Смотрите PID, CPU, память.',
+  'demos.tab.profiles': 'Профили',
 } as Record<string, string>;

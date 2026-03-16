@@ -49,4 +49,11 @@ export default {
   'footer.tagline': '按端口终止进程。优雅至极。',
   'footer.made': '由 Hammad Khan 制作',
   'footer.star': '在 GitHub 上加星',
+  'features.profiles.title': '配置预设',
+  'features.profiles.desc': '将端口组合保存为命名配置。运行 slay --profile dev。',
+  'features.ranges.title': '端口范围',
+  'features.ranges.desc': '使用 slay 8000-8010 终止端口范围。',
+  'features.portinfo.title': '端口信息',
+  'features.portinfo.desc': '无需终止即可检查端口。查看 PID、CPU、内存和运行时间。',
+  'demos.tab.profiles': '配置',
 } as Record<string, string>;

@@ -287,9 +287,9 @@ describe('Terminal', () => {
 describe('Features', () => {
   const features = readComponent('Features');
 
-  it('has 9 feature cards', () => {
+  it('has 12 feature cards', () => {
     const matches = features.match(/features\.\w+\.title/g);
-    expect(matches).toHaveLength(9);
+    expect(matches).toHaveLength(12);
   });
 
   it('includes key feature translation keys', () => {
@@ -298,6 +298,9 @@ describe('Features', () => {
     expect(features).toContain('features.zero.title');
     expect(features).toContain('features.cross.title');
     expect(features).toContain('features.watch.title');
+    expect(features).toContain('features.profiles.title');
+    expect(features).toContain('features.ranges.title');
+    expect(features).toContain('features.portinfo.title');
   });
 
   it('uses scroll-reveal', () => {
@@ -388,7 +391,7 @@ describe('Install', () => {
 describe('Demo', () => {
   const demo = readComponent('Demo');
 
-  it('has twelve demo scenarios across three tabs', () => {
+  it('has fifteen demo scenarios across four tabs', () => {
     expect(demo).toContain('Basic Kill');
     expect(demo).toContain('Interactive Mode');
     expect(demo).toContain('Watch Mode');
@@ -401,6 +404,9 @@ describe('Demo', () => {
     expect(demo).toContain('UDP Ports');
     expect(demo).toContain('All Listeners');
     expect(demo).toContain('Verbose Mode');
+    expect(demo).toContain('Init Config');
+    expect(demo).toContain('Run Profile');
+    expect(demo).toContain('Port Range');
   });
 
   it('uses Terminal component', () => {
@@ -416,10 +422,11 @@ describe('Demo', () => {
     expect(demo).toContain('aria-label="Demo categories"');
   });
 
-  it('has three tab categories', () => {
+  it('has four tab categories', () => {
     expect(demo).toContain('demos.tab.basic');
     expect(demo).toContain('demos.tab.advanced');
     expect(demo).toContain('demos.tab.output');
+    expect(demo).toContain('demos.tab.profiles');
   });
 
   it('has staggered animation delays', () => {

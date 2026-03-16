@@ -105,6 +105,37 @@ const demos = {
       ],
     },
   ],
+  profiles: [
+    {
+      title: 'Init Config',
+      termTitle: 'slay init',
+      lines: [
+        { type: 'prompt', text: '$ slay init' },
+        { type: 'success', text: '✓ Created .slay.json with example profiles' },
+      ],
+    },
+    {
+      title: 'Run Profile',
+      termTitle: 'slay --profile dev',
+      lines: [
+        { type: 'prompt', text: '$ slay --profile dev' },
+        { type: 'output', text: '3000 > node    PID 12847 (Dev Server)' },
+        { type: 'output', text: '5173 > node    PID 13201 (Vite)' },
+        { type: 'output', text: '5432 > pg      PID 4510  (PostgreSQL)' },
+        { type: 'success', text: 'killed 3 processes on 3 ports' },
+      ],
+    },
+    {
+      title: 'Port Range',
+      termTitle: 'slay 8000-8005',
+      lines: [
+        { type: 'prompt', text: '$ slay 8000-8005' },
+        { type: 'output', text: '8000 > node PID 9001 (HTTP Alt)' },
+        { type: 'output', text: '8001 > node PID 9002 (HTTP Alt)' },
+        { type: 'success', text: 'killed 2 processes on 2 ports (4 ports clear)' },
+      ],
+    },
+  ],
   output: [
     {
       title: 'JSON Output',
@@ -163,6 +194,7 @@ const tabs = [
   { id: 'basic', label: t('demos.tab.basic'), color: 'var(--green)' },
   { id: 'advanced', label: t('demos.tab.advanced'), color: 'var(--yellow)' },
   { id: 'output', label: t('demos.tab.output'), color: 'var(--cyan)' },
+  { id: 'profiles', label: t('demos.tab.profiles'), color: 'var(--red)' },
 ];
 ---
 

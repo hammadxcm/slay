@@ -52,6 +52,9 @@ Also available on **[JSR](https://jsr.io/@hammadxcm/slay)** for Deno and modern 
 ## Why Slay?
 
 - **Interactive TUI** with search and multi-select
+- **Profile presets** — save port combos as named profiles
+- **Port ranges** — kill `8000-8010` in one command
+- **Port info** — inspect ports without killing (`slay info 3000`)
 - **Graceful shutdown** — SIGTERM first, escalate to SIGKILL
 - **Watch mode** — auto-kill processes that respawn
 - **Process tree killing** — take down children first
@@ -76,6 +79,49 @@ slay 3000
 ```bash
 slay 3000 8080 5432
 ```
+
+### Kill a port range
+
+```bash
+slay 8000-8010
+```
+
+### Profile presets
+
+```bash
+# Create a config file
+slay init
+
+# Add a profile interactively
+slay profile add
+
+# List profiles
+slay profile list
+
+# Run a saved profile
+slay --profile dev
+```
+
+**`.slay.json` format:**
+
+```json
+{
+  "profiles": {
+    "dev": { "ports": [3000, 5173, 5432], "soft": true },
+    "clean": { "all": true, "force": true }
+  }
+}
+```
+
+> **Tip:** CLI flags override profile values. `slay --profile dev --force` uses the profile's ports but force-kills.
+
+### Port info
+
+```bash
+slay info 3000
+```
+
+> Shows PID, command, CPU, memory, and uptime without killing anything.
 
 ### Force kill (no prompt)
 
@@ -156,6 +202,7 @@ slay 53 --udp
 | `-w, --watch` | Keep polling & killing (Ctrl+C to stop) |
 | `-i, --interactive` | TUI process selector |
 | `--all` | Kill all listening processes |
+| `--profile <name>` | Run a saved profile from `.slay.json` |
 | `-h, --help` | Show help |
 
 <!-- interactive -->
@@ -249,19 +296,27 @@ When using `--json`, slay emits NDJSON with these event types:
 ```
 src/
   cli.ts              Argument parsing & validation
+  config.ts           Config file discovery & profile resolution
+  commands/
+    init.ts           slay init — create .slay.json
+    profile.ts        slay profile list/add/rm
+    profile-builder.ts Interactive profile creation TUI
+    info.ts           slay info — inspect ports without killing
   core/
     discovery.ts      Port/process discovery
     killer.ts         Process killing logic
     labels.ts         Smart label resolution
+    tree.ts           Process tree discovery
   platform/
     index.ts          Platform detection & adapter selection
     unix.ts           macOS/Linux (lsof)
     windows.ts        Windows (netstat/taskkill)
+    detail.ts         Process detail (CPU, memory, uptime)
   ui/
     format.ts         Output formatting
     colors.ts         Terminal colors
     animation.ts      Kill animations
-    prompt.ts         Confirmation prompts
+    prompt.ts         Confirmation & text input prompts
     interactive.ts    TUI selector
   utils/
     exec.ts           Child process helpers

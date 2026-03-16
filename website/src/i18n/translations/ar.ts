@@ -49,4 +49,11 @@ export default {
   'footer.tagline': 'أوقف العمليات حسب المنفذ. بأناقة.',
   'footer.made': 'صنع بواسطة Hammad Khan',
   'footer.star': 'نجمة على GitHub',
+  'features.profiles.title': 'ملفات التعريف المسبقة',
+  'features.profiles.desc': 'احفظ مجموعات المنافذ كملفات تعريف مسماة.',
+  'features.ranges.title': 'نطاقات المنافذ',
+  'features.ranges.desc': 'اقتل نطاقًا من المنافذ باستخدام slay 8000-8010.',
+  'features.portinfo.title': 'معلومات المنفذ',
+  'features.portinfo.desc': 'افحص المنافذ بدون إنهاء. شاهد PID والمعالج والذاكرة.',
+  'demos.tab.profiles': 'الملفات',
 } as Record<string, string>;

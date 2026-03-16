@@ -53,4 +53,11 @@ export default {
   'footer.tagline': 'Mata procesos por puerto. Con estilo.',
   'footer.made': 'Hecho por Hammad Khan',
   'footer.star': 'Estrella en GitHub',
+  'features.profiles.title': 'Perfiles predefinidos',
+  'features.profiles.desc': 'Guarda combinaciones de puertos como perfiles.',
+  'features.ranges.title': 'Rangos de puertos',
+  'features.ranges.desc': 'Mata un rango de puertos con slay 8000-8010.',
+  'features.portinfo.title': 'Info de puertos',
+  'features.portinfo.desc': 'Inspecciona puertos sin matar. Ve PID, CPU, memoria.',
+  'demos.tab.profiles': 'Perfiles',
 } as Record<string, string>;

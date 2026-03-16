@@ -57,4 +57,11 @@ export default {
   'footer.tagline': 'Tuez les processus par port. Avec élégance.',
   'footer.made': 'Créé par Hammad Khan',
   'footer.star': 'Étoile sur GitHub',
+  'features.profiles.title': 'Profils prédéfinis',
+  'features.profiles.desc': 'Enregistrez des combinaisons de ports en profils nommés.',
+  'features.ranges.title': 'Plages de ports',
+  'features.ranges.desc': 'Tuez une plage de ports avec slay 8000-8010.',
+  'features.portinfo.title': 'Info port',
+  'features.portinfo.desc': 'Inspectez les ports sans tuer. Voyez PID, CPU, mémoire.',
+  'demos.tab.profiles': 'Profils',
 } as Record<string, string>;

@@ -39,6 +39,33 @@ export interface CliOptions {
   tree: boolean;
   protocol: Protocol;
   help: boolean;
+  command?: 'init' | 'profile' | 'info';
+  subArgs: string[];
+  profile?: string;
+}
+
+export interface ProcessDetail {
+  cpu: string;
+  memory: string;
+  user: string;
+  uptime: string;
+}
+
+export interface ProfileOptions {
+  ports?: number[];
+  force?: boolean;
+  yes?: boolean;
+  soft?: boolean;
+  verbose?: boolean;
+  all?: boolean;
+  watch?: boolean;
+  dryRun?: boolean;
+  tree?: boolean;
+  protocol?: Protocol;
+}
+
+export interface SlayConfig {
+  profiles: Record<string, ProfileOptions>;
 }
 
 export enum KillErrorCode {

@@ -1,3 +1,4 @@
+import { createInterface } from 'node:readline';
 import { c, isTTY } from './colors.js';
 import { withRawMode } from './raw-mode.js';
 
@@ -30,6 +31,22 @@ export async function confirm(message: string): Promise<boolean> {
       };
 
       stdin.on('data', onData);
+    });
+  });
+}
+
+export async function textInput(message: string): Promise<string> {
+  if (!isTTY()) return '';
+
+  const rl = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  return new Promise((resolve) => {
+    rl.question(message, (answer) => {
+      rl.close();
+      resolve(answer);
     });
   });
 }

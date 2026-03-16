@@ -55,4 +55,11 @@ export default {
   'footer.tagline': 'Mate processos por porta. Com estilo.',
   'footer.made': 'Feito por Hammad Khan',
   'footer.star': 'Estrela no GitHub',
+  'features.profiles.title': 'Perfis predefinidos',
+  'features.profiles.desc': 'Salve combinações de portas como perfis nomeados.',
+  'features.ranges.title': 'Faixas de portas',
+  'features.ranges.desc': 'Mate uma faixa de portas com slay 8000-8010.',
+  'features.portinfo.title': 'Info de portas',
+  'features.portinfo.desc': 'Inspecione portas sem matar. Veja PID, CPU, memória.',
+  'demos.tab.profiles': 'Perfis',
 } as Record<string, string>;

@@ -50,4 +50,11 @@ export default {
   'footer.tagline': 'Kill processes by port. Beautifully.',
   'footer.made': 'Made by Hammad Khan',
   'footer.star': 'Star on GitHub',
+  'features.profiles.title': 'Profile Presets',
+  'features.profiles.desc': 'Save port combos and flags as named profiles. Run slay --profile dev.',
+  'features.ranges.title': 'Port Ranges',
+  'features.ranges.desc': 'Kill a range of ports with slay 8000-8010.',
+  'features.portinfo.title': 'Port Info',
+  'features.portinfo.desc': 'Inspect ports without killing. See PID, CPU, memory, and uptime.',
+  'demos.tab.profiles': 'Profiles',
 } as Record<string, string>;

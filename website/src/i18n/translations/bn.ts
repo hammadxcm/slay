@@ -50,4 +50,11 @@ export default {
   'footer.tagline': 'পোর্ট অনুযায়ী প্রসেস বন্ধ করুন। সুন্দরভাবে।',
   'footer.made': 'Hammad Khan দ্বারা তৈরি',
   'footer.star': 'GitHub-এ স্টার দিন',
+  'features.profiles.title': 'প্রোফাইল প্রিসেট',
+  'features.profiles.desc': 'পোর্ট কম্বো নামযুক্ত প্রোফাইল হিসাবে সংরক্ষণ করুন।',
+  'features.ranges.title': 'পোর্ট রেঞ্জ',
+  'features.ranges.desc': 'slay 8000-8010 দিয়ে পোর্ট রেঞ্জ বন্ধ করুন।',
+  'features.portinfo.title': 'পোর্ট তথ্য',
+  'features.portinfo.desc': 'বন্ধ না করে পোর্ট পরিদর্শন করুন। PID, CPU, মেমোরি দেখুন।',
+  'demos.tab.profiles': 'প্রোফাইল',
 } as Record<string, string>;

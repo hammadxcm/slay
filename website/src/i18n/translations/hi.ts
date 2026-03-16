@@ -50,4 +50,11 @@ export default {
   'footer.tagline': 'पोर्ट से प्रोसेस बंद करें। खूबसूरती से।',
   'footer.made': 'Hammad Khan द्वारा निर्मित',
   'footer.star': 'GitHub पर स्टार करें',
+  'features.profiles.title': 'प्रोफ़ाइल प्रीसेट',
+  'features.profiles.desc': 'पोर्ट कॉम्बो को नामित प्रोफ़ाइल के रूप में सहेजें।',
+  'features.ranges.title': 'पोर्ट रेंज',
+  'features.ranges.desc': 'slay 8000-8010 से पोर्ट रेंज बंद करें।',
+  'features.portinfo.title': 'पोर्ट जानकारी',
+  'features.portinfo.desc': 'बिना बंद किए पोर्ट की जांच करें। PID, CPU, मेमोरी देखें।',
+  'demos.tab.profiles': 'प्रोफ़ाइल',
 } as Record<string, string>;

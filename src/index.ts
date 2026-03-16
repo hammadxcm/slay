@@ -1,4 +1,8 @@
 import { parseArgs, showHelp, validateOptions } from './cli.js';
+import { runInfo } from './commands/info.js';
+import { runInit } from './commands/init.js';
+import { runProfile } from './commands/profile.js';
+import { findConfig, loadConfig, mergeProfileOpts, resolveProfile } from './config.js';
 import { findAllListening, findByPorts } from './core/discovery.js';
 import { killAll } from './core/killer.js';
 import { getSystemPortWarning } from './core/labels.js';
@@ -21,11 +25,36 @@ import { confirm } from './ui/prompt.js';
 import { SlayError } from './utils/errors.js';
 
 async function run(): Promise<void> {
-  const opts = parseArgs(process.argv);
+  let opts = parseArgs(process.argv);
+
+  // Handle subcommands
+  if (opts.command === 'init') {
+    await runInit();
+    return;
+  }
+  if (opts.command === 'profile') {
+    await runProfile(opts.subArgs);
+    return;
+  }
+  if (opts.command === 'info') {
+    await runInfo(opts.ports);
+    return;
+  }
 
   if (opts.help) {
     showHelp();
     process.exit(0);
+  }
+
+  // Merge profile if specified
+  if (opts.profile) {
+    const configPath = findConfig();
+    if (!configPath) {
+      throw new Error('No .slay.json found. Run slay init to create one.');
+    }
+    const config = loadConfig(configPath);
+    const profileOpts = resolveProfile(config, opts.profile);
+    opts = mergeProfileOpts(opts, profileOpts);
   }
 
   validateOptions(opts);
