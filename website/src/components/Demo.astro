@@ -290,9 +290,10 @@ const tabs = [
 </style>
 
 <script>
-  const tablist = document.querySelector('[role="tablist"]');
-  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
-  const panels = document.querySelectorAll<HTMLElement>('[role="tabpanel"]');
+  const demosSection = document.getElementById('demos')!;
+  const tablist = demosSection.querySelector('[role="tablist"]');
+  const tabs = Array.from(demosSection.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+  const panels = demosSection.querySelectorAll<HTMLElement>('[role="tabpanel"]');
 
   function activateTab(tab: HTMLButtonElement) {
     tabs.forEach((t) => {
