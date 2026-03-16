@@ -54,6 +54,7 @@ jobs:
         with:
           ref: ${{ inputs.tag || github.ref }}
       - run: npx jsr publish
+        continue-on-error: true
 
   binaries:
     needs: build-test
@@ -90,7 +91,8 @@ jobs:
           path: ${{ matrix.artifact }}
 
   release:
-    needs: [publish-npm, publish-jsr, binaries]
+    needs: [publish-npm, binaries]
+    if: always() && needs.publish-npm.result == 'success' && needs.binaries.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v8
