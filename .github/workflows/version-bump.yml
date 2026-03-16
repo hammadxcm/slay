@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
 
       - uses: actions/setup-node@v6
         with:
@@ -56,12 +56,3 @@ jobs:
 
       - name: Push commit and tag
         run: git push --follow-tags
-
-      - name: Get new version tag
-        id: tag
-        run: echo "version=$(node -p 'require(\"./package.json\").version')" >> "$GITHUB_OUTPUT"
-
-      - name: Trigger release workflow
-        run: gh workflow run Release -f tag="v${{ steps.tag.outputs.version }}"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
