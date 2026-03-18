@@ -12,11 +12,19 @@ const t = getTranslation(locale);
 
 <section class="hero" id="hero">
   <div class="hero-glow"></div>
+  <div class="hero-floats" aria-hidden="true">
+    <span class="hero-float" style="left:5%;top:20%;animation-delay:0s;font-size:2.5rem">3000</span>
+    <span class="hero-float" style="left:85%;top:15%;animation-delay:3s;font-size:1.8rem">8080</span>
+    <span class="hero-float" style="left:75%;top:75%;animation-delay:7s;font-size:2rem">5432</span>
+    <span class="hero-float" style="left:12%;top:72%;animation-delay:5s;font-size:1.5rem">5173</span>
+    <span class="hero-float" style="left:50%;top:8%;animation-delay:2s;font-size:1.2rem">6379</span>
+    <span class="hero-float" style="left:92%;top:55%;animation-delay:9s;font-size:2.2rem">27017</span>
+  </div>
   <div class="container hero-grid">
     <div class="hero-content">
       <h1 class="hero-title">
         {t('hero.title.line1')}<br />
-        <span class="gradient-text">{t('hero.title.line2')}</span>
+        <span class="gradient-text" id="hero-rotating-word" aria-live="polite" aria-atomic="true">{t('hero.title.line2')}</span>
       </h1>
       <p class="hero-description">
         {t('hero.description')}
@@ -71,9 +79,12 @@ const t = getTranslation(locale);
     top: -200px;
     left: 50%;
     transform: translateX(-50%) translateY(calc(var(--scroll, 0) * 0.1px));
-    width: 800px;
-    height: 600px;
-    background: radial-gradient(ellipse, rgba(255, 107, 107, var(--glow-opacity)) 0%, transparent 70%);
+    width: 900px;
+    height: 700px;
+    background:
+      radial-gradient(ellipse at 40% 50%, rgba(255, 107, 107, var(--glow-opacity)) 0%, transparent 60%),
+      radial-gradient(ellipse at 60% 40%, rgba(34, 211, 238, calc(var(--glow-opacity) * 0.5)) 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 60%, rgba(255, 212, 59, calc(var(--glow-opacity) * 0.3)) 0%, transparent 60%);
     animation: glow 4s ease-in-out infinite;
     pointer-events: none;
   }
@@ -92,6 +103,73 @@ const t = getTranslation(locale);
     line-height: 1.1;
     letter-spacing: -0.03em;
     margin-bottom: 24px;
+  }
+
+  #hero-rotating-word {
+    display: inline-block;
+    position: relative;
+  }
+
+  @keyframes word-in {
+    0% {
+      opacity: 0;
+      transform: translateY(100%) rotateX(-80deg);
+      filter: blur(8px);
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(-8%) rotateX(5deg);
+      filter: blur(0);
+    }
+    80% {
+      transform: translateY(2%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) rotateX(0deg);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes word-out {
+    0% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+    30% {
+      opacity: 0.8;
+      transform: translateY(-10%) scale(1.04);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-120%) scale(0.9);
+      filter: blur(6px);
+    }
+  }
+
+  @keyframes word-glow {
+    0% {
+      text-shadow: none;
+    }
+    50% {
+      text-shadow:
+        0 0 20px var(--glow-color, rgba(255, 107, 107, 0.6)),
+        0 0 40px color-mix(in srgb, var(--glow-color, rgba(255, 107, 107, 0.6)) 50%, transparent),
+        0 0 60px color-mix(in srgb, var(--glow-color, rgba(255, 107, 107, 0.6)) 17%, transparent);
+    }
+    100% {
+      text-shadow: none;
+    }
+  }
+
+  #hero-rotating-word.entering {
+    animation: word-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+      word-glow 0.8s ease 0.2s;
+  }
+
+  #hero-rotating-word.leaving {
+    animation: word-out 0.35s cubic-bezier(0.55, 0, 1, 0.45) forwards;
   }
 
   .hero-description {
@@ -121,15 +199,53 @@ const t = getTranslation(locale);
     min-height: 44px;
   }
 
+  .hero-floats {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .hero-float {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--red);
+    opacity: 0.04;
+    animation: float 18s ease-in-out infinite;
+  }
+
   .btn--primary {
-    background: var(--red);
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--red), #ff8787);
     color: #fff;
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.15);
+  }
+
+  .btn--primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.2) 45%,
+      rgba(255, 255, 255, 0.05) 55%,
+      transparent 60%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+    border-radius: inherit;
+    pointer-events: none;
   }
 
   .btn--primary:hover {
     opacity: 1;
-    background: #ff5252;
-    box-shadow: 0 0 24px rgba(255, 107, 107, 0.3);
+    box-shadow:
+      0 0 30px rgba(255, 107, 107, 0.35),
+      0 0 60px rgba(255, 107, 107, 0.1);
+    transform: translateY(-2px);
   }
 
   .btn--outline {
@@ -259,9 +375,16 @@ const t = getTranslation(locale);
       font-size: 1rem;
     }
 
+    .hero-actions {
+      flex-direction: column;
+      width: 100%;
+    }
+
     .btn {
-      padding: 10px 20px;
-      font-size: 0.85rem;
+      padding: 12px 20px;
+      font-size: 0.9rem;
+      justify-content: center;
+      width: 100%;
     }
   }
 </style>
@@ -334,5 +457,51 @@ const t = getTranslation(locale);
 
     // Replay every 6s
     setInterval(restartAnimations, 6000);
+  }
+
+  // Per-theme synonyms for the rotating hero word
+  const themeSynonyms: Record<string, string[]> = {
+    dark:      ['Beautifully.', 'Lightning Fast.', 'Like a Boss.', 'Without Mercy.', 'In a Flash.', 'No Survivors.', 'One Command.', 'Zero Effort.', 'With Precision.', 'Like Magic.'],
+    light:     ['Cleanly.', 'Simply.', 'Effortlessly.', 'Minimally.', 'With Clarity.', 'Spotlessly.', 'Refreshingly.', 'Breezily.'],
+    blood:     ['Mercilessly.', 'Blood-Soaked.', 'No Mercy.', 'With Bloodlust.', 'Brutally.', 'Crimson Red.', 'Gore Mode.', 'Death Blow.'],
+    synthwave: ['Retro Style.', 'Neon-Lit.', 'Turbo Mode.', 'Synthetically.', '80s Style.', 'Pixelated.', 'Rad Mode.', 'Full Throttle.'],
+    matrix:    ['System Override.', 'Root Access.', 'Ctrl+Alt+Slay.', 'Rm -rf Style.', 'Hacked.', 'Zero Day.', 'Kernel Panic.', 'Sudo Slay.'],
+    cyberpunk: ['Augmented.', 'Chrome-Plated.', 'Overclocked.', 'Neural-Linked.', 'Hardwired.', 'Cyber-Slayed.', 'Jacked In.', 'Neon-Wired.'],
+    gruvbox:   ['Old School.', 'No Nonsense.', 'Warm & Cozy.', 'Retro Clean.', 'Back to Basics.', 'Analog Style.', 'Vintage.', 'Tried & True.'],
+    arctic:    ['Sub-Zero.', 'Frostbitten.', 'Ice Cold.', 'Glacially.', 'Frozen Solid.', 'Permafrost.', 'Polar Style.', 'Arctic Clean.'],
+    nebula:    ['Cosmic.', 'Stellar.', 'Interstellar.', 'Nebulous.', 'Light Years.', 'Supernova.', 'Deep Space.', 'Star-Slayed.'],
+  };
+
+  function getThemeName(): string {
+    return document.documentElement.getAttribute('data-theme') || 'dark';
+  }
+
+  let synonyms = themeSynonyms[getThemeName()] || themeSynonyms.dark;
+  const rotatingWord = document.getElementById('hero-rotating-word');
+  if (rotatingWord && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let wordIndex = 0;
+    setInterval(() => {
+      rotatingWord.classList.remove('entering');
+      rotatingWord.classList.add('leaving');
+      setTimeout(() => {
+        wordIndex = (wordIndex + 1) % synonyms.length;
+        rotatingWord.textContent = synonyms[wordIndex];
+        rotatingWord.classList.remove('leaving');
+        rotatingWord.classList.add('entering');
+      }, 350);
+    }, 3000);
+
+    // On theme change, swap synonyms and show first word immediately
+    window.addEventListener('themechange', (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      const newTheme = detail?.theme || 'dark';
+      synonyms = themeSynonyms[newTheme] || themeSynonyms.dark;
+      wordIndex = 0;
+      rotatingWord.classList.remove('leaving');
+      rotatingWord.textContent = synonyms[0];
+      rotatingWord.classList.remove('entering');
+      void rotatingWord.offsetWidth;
+      rotatingWord.classList.add('entering');
+    });
   }
 </script>

@@ -127,7 +127,7 @@ jobs:
 
           cat > Formula/slay-port.rb << RUBY
           class SlayPort < Formula
-            desc "Kill processes by port. Beautifully."
+            desc "kill processes by port. Beautifully."
             homepage "https://slay.fyniti.co.uk"
             license "MIT"
             version "${VERSION}"

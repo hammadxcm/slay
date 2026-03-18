@@ -10,78 +10,105 @@ const t = getTranslation(locale);
 
 const features = [
   {
-    icon: '~',
+    id: 'tui',
+    cmd: 'slay -i',
     title: t('features.tui.title'),
     description: t('features.tui.desc'),
     color: 'var(--cyan)',
   },
   {
-    icon: '*',
+    id: 'kill',
+    cmd: 'slay 3000',
     title: t('features.animations.title'),
     description: t('features.animations.desc'),
     color: 'var(--yellow)',
   },
   {
-    icon: '!',
+    id: 'graceful',
+    cmd: 'slay -g 3000',
     title: t('features.graceful.title'),
     description: t('features.graceful.desc'),
     color: 'var(--green)',
   },
   {
-    icon: '#',
+    id: 'watch',
+    cmd: 'slay -w 3000',
     title: t('features.watch.title'),
     description: t('features.watch.desc'),
     color: 'var(--red)',
   },
   {
-    icon: '>',
+    id: 'tree',
+    cmd: 'slay --tree 3000',
     title: t('features.tree.title'),
     description: t('features.tree.desc'),
     color: 'var(--cyan)',
   },
   {
-    icon: '{}',
+    id: 'json',
+    cmd: 'slay --json 3000',
     title: t('features.json.title'),
     description: t('features.json.desc'),
     color: 'var(--yellow)',
   },
   {
-    icon: '?',
+    id: 'labels',
+    cmd: 'slay --all',
     title: t('features.labels.title'),
     description: t('features.labels.desc'),
     color: 'var(--green)',
   },
   {
-    icon: '0',
+    id: 'zero',
+    cmd: 'npm i -g slay-port',
     title: t('features.zero.title'),
     description: t('features.zero.desc'),
     color: 'var(--red)',
   },
   {
-    icon: '/',
+    id: 'cross',
+    cmd: 'works everywhere ✓',
     title: t('features.cross.title'),
     description: t('features.cross.desc'),
     color: 'var(--cyan)',
   },
   {
-    icon: '@',
+    id: 'profiles',
+    cmd: 'slay --profile dev',
     title: t('features.profiles.title'),
     description: t('features.profiles.desc'),
     color: 'var(--red)',
   },
   {
-    icon: '..',
+    id: 'ranges',
+    cmd: 'slay 8000-8010',
     title: t('features.ranges.title'),
     description: t('features.ranges.desc'),
     color: 'var(--yellow)',
   },
   {
-    icon: 'i',
+    id: 'portinfo',
+    cmd: 'slay info 3000',
     title: t('features.portinfo.title'),
     description: t('features.portinfo.desc'),
     color: 'var(--green)',
   },
 ];
+
+const icons: Record<string, string> = {
+  tui: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="8" x2="7" y2="8" class="tui-cursor"/><line x1="3" y1="12" x2="21" y2="12" opacity="0.3"/></svg>`,
+  kill: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>`,
+  graceful: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-1 4-4 6-7 8 3 1 6 4 7 10 1-6 4-9 7-10-3-2-6-4-7-8z"/></svg>`,
+  watch: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="10" ry="6"/><circle cx="12" cy="12" r="2.5"/></svg>`,
+  tree: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="2"/><circle cx="5" cy="14" r="2"/><circle cx="19" cy="14" r="2"/><circle cx="5" cy="21" r="1.5"/><circle cx="19" cy="21" r="1.5"/><line x1="12" y1="6" x2="5" y2="12"/><line x1="12" y1="6" x2="19" y2="12"/><line x1="5" y1="16" x2="5" y2="19.5"/><line x1="19" y1="16" x2="19" y2="19.5"/></svg>`,
+  json: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H6a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2 2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h2"/><path d="M16 3h2a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2 2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-2"/></svg>`,
+  labels: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h10l6 8-6 8H4l6-8z"/><circle cx="9" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>`,
+  zero: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 13 8 17 8"/><polyline points="11 22 11 16 7 16"/><line x1="13" y1="8" x2="7" y2="16"/></svg>`,
+  cross: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10"/><path d="M12 2a15 15 0 0 0-4 10 15 15 0 0 0 4 10"/></svg>`,
+  profiles: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor"/><circle cx="14" cy="12" r="2" fill="currentColor"/><circle cx="10" cy="18" r="2" fill="currentColor"/></svg>`,
+  ranges: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="2 9 5 12 2 15"/><polyline points="22 9 19 12 22 15"/></svg>`,
+  portinfo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><line x1="15" y1="15" x2="21" y2="21"/></svg>`,
+};
 ---
 
 <section class="section" id="features">
@@ -90,13 +117,12 @@ const features = [
     <p class="section-subtitle reveal">{t('features.subtitle')}</p>
     <div class="features-grid">
       {
-        features.map((feature, i) => (
-          <div class="feature-card reveal" style={`--accent: ${feature.color}; --delay: ${i * 0.06}s`}>
-            <div class="feature-icon" aria-hidden="true">
-              {feature.icon}
-            </div>
-            <h3 class="feature-title">{feature.title}</h3>
-            <p class="feature-description">{feature.description}</p>
+        features.map((f, i) => (
+          <div class="feature-card reveal" style={`--accent: ${f.color}; --delay: ${i * 0.06}s`}>
+            <div class={`feature-icon feature-icon--${f.id}`} aria-hidden="true" set:html={icons[f.id]} />
+            <h3 class="feature-title">{f.title}</h3>
+            <p class="feature-description">{f.description}</p>
+            <span class="feature-cmd">{f.cmd}</span>
           </div>
         ))
       }
@@ -112,32 +138,45 @@ const features = [
   }
 
   .feature-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
+    position: relative;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
     border-left: 3px solid var(--accent);
     border-radius: 12px;
     padding: 28px;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
   }
 
   .feature-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 30px var(--card-shadow), 0 0 0 1px var(--accent);
+    box-shadow: 0 12px 40px var(--card-shadow), 0 0 0 1px var(--accent), 0 0 30px color-mix(in srgb, var(--accent) 15%, transparent);
+    border-color: var(--accent);
+  }
+
+  .feature-card:hover .feature-icon {
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--accent) 10%, transparent);
+    will-change: transform;
   }
 
   .feature-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
     background: var(--icon-bg);
     color: var(--accent);
-    font-family: var(--font-mono);
-    font-weight: 700;
-    font-size: 1.1rem;
     margin-bottom: 16px;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+
+  .feature-icon :global(svg) {
+    width: 26px;
+    height: 26px;
   }
 
   .feature-title {
@@ -152,15 +191,172 @@ const features = [
     line-height: 1.6;
   }
 
+  .feature-cmd {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.3s, transform 0.3s;
+    margin-top: 12px;
+  }
+
+  .feature-card:hover .feature-cmd {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+
+  /* Icon hover animations */
+  @keyframes icon-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @keyframes icon-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes icon-breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(0.85); }
+  }
+
+  @keyframes icon-blink-eye {
+    0%, 40%, 100% { transform: scaleY(1); }
+    45% { transform: scaleY(0.1); }
+    55% { transform: scaleY(0.1); }
+    60% { transform: scaleY(1); }
+  }
+
+  @keyframes icon-spread {
+    0% { transform: scale(0.85); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes icon-bounce {
+    0%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-3px); }
+    60% { transform: translateY(1px); }
+  }
+
+  @keyframes icon-swing {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+  }
+
+  @keyframes icon-flash {
+    0%, 20%, 40%, 100% { opacity: 1; }
+    10%, 30% { opacity: 0.2; }
+  }
+
+  @keyframes icon-slide {
+    0%, 100% { transform: translateX(0); }
+    30% { transform: translateX(-2px); }
+    70% { transform: translateX(2px); }
+  }
+
+  @keyframes icon-expand {
+    0%, 100% { transform: scaleX(1); }
+    50% { transform: scaleX(1.2); }
+  }
+
+  @keyframes icon-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+
+  .feature-card:hover .feature-icon--tui :global(.tui-cursor) {
+    animation: icon-blink 0.8s step-end infinite;
+  }
+
+  .feature-card:hover .feature-icon--kill :global(svg) {
+    animation: icon-rotate 1.2s linear infinite;
+  }
+
+  .feature-card:hover .feature-icon--graceful :global(svg) {
+    animation: icon-breathe 1.5s ease-in-out infinite;
+  }
+
+  .feature-card:hover .feature-icon--watch :global(svg) {
+    animation: icon-blink-eye 2s ease-in-out infinite;
+  }
+
+  .feature-card:hover .feature-icon--tree :global(svg) {
+    animation: icon-spread 0.8s ease-out;
+  }
+
+  .feature-card:hover .feature-icon--json :global(svg) {
+    animation: icon-bounce 0.6s ease-in-out infinite;
+  }
+
+  .feature-card:hover .feature-icon--labels :global(svg) {
+    animation: icon-swing 0.8s ease-in-out infinite;
+  }
+
+  .feature-card:hover .feature-icon--zero :global(svg) {
+    animation: icon-flash 0.8s ease-in-out;
+  }
+
+  .feature-card:hover .feature-icon--cross :global(svg) {
+    animation: icon-rotate 3s linear infinite;
+  }
+
+  .feature-card:hover .feature-icon--profiles :global(svg) {
+    animation: icon-slide 0.8s ease-in-out infinite;
+  }
+
+  .feature-card:hover .feature-icon--ranges :global(svg) {
+    animation: icon-expand 0.8s ease-in-out infinite;
+  }
+
+  .feature-card:hover .feature-icon--portinfo :global(svg) {
+    animation: icon-pulse 0.8s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [class*="feature-icon--"] :global(svg),
+    [class*="feature-icon--"] :global(svg *) {
+      animation: none !important;
+    }
+    .feature-cmd {
+      transition: none;
+    }
+  }
+
   @media (max-width: 1024px) {
     .features-grid {
       grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
     }
   }
 
   @media (max-width: 480px) {
     .features-grid {
       grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .feature-card {
+      padding: 20px;
+    }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+    }
+
+    .feature-icon :global(svg) {
+      width: 24px;
+      height: 24px;
+    }
+
+    .feature-cmd {
+      opacity: 0.5;
+      transform: translateY(0);
     }
   }
 </style>

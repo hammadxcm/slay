@@ -1,7 +1,7 @@
 <h1 align="center">slay</h1>
 
 <p align="center">
-  <b>Kill processes by port. Beautifully.</b>
+  <b>kill processes by port. Beautifully.</b>
 </p>
 
 <p align="center">
@@ -13,6 +13,7 @@
   <a href="https://github.com/hammadxcm/slay/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/slay-port.svg" alt="license"></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/node/v/slay-port.svg" alt="node version"></a>
   <a href="https://github.com/hammadxcm/slay/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
+  <a href="https://github.com/hammadxcm/slay#install"><img src="https://img.shields.io/badge/homebrew-available-orange.svg" alt="Homebrew"></a>
 </p>
 
 ---
@@ -113,6 +114,8 @@ slay --profile dev
 }
 ```
 
+> **Supported profile fields:** `ports`, `force`, `yes`, `soft`, `verbose`, `all`, `watch`, `dryRun`, `tree`, `protocol`
+
 > **Tip:** CLI flags override profile values. `slay --profile dev --force` uses the profile's ports but force-kills.
 
 ### Port info
@@ -185,6 +188,18 @@ slay 3000 --json | jq '.pid'
 slay 53 --udp
 ```
 
+<!-- subcommands -->
+
+## Subcommands
+
+| Command | Description |
+|---|---|
+| `slay init` | Create a `.slay.json` config file in the current directory |
+| `slay profile list` | List all saved profiles |
+| `slay profile add` | Interactively create a new profile |
+| `slay profile rm <name>` | Remove a saved profile |
+| `slay info <port>` | Inspect a port (PID, command, CPU, memory, uptime) without killing |
+
 <!-- flags -->
 
 ## Flags
@@ -213,7 +228,7 @@ Launch with `slay -i` to get a full TUI process selector.
 
 | Key | Action |
 |---|---|
-| <kbd>↑</kbd> <kbd>↓</kbd> / <kbd>j</kbd> <kbd>k</kbd> | Navigate |
+| <kbd>&uarr;</kbd> <kbd>&darr;</kbd> / <kbd>j</kbd> <kbd>k</kbd> | Navigate |
 | <kbd>Space</kbd> | Toggle selection |
 | <kbd>a</kbd> | Toggle all |
 | <kbd>/</kbd> | Search |
@@ -263,8 +278,10 @@ for (const proc of procs) {
 - `killProcess`, `killAll` — killing
 - `enrichLabel`, `isSystemPort` — labels
 - `platform`, `setPlatform` — platform adapter
+- `findConfig`, `loadConfig`, `saveConfig`, `resolveProfile`, `mergeProfileOpts` — config
+- `getProcessDetail` — process detail
 - `SlayError` — error type
-- Types: `ProcessInfo`, `KillResult`, `CliOptions`, `PlatformAdapter`, `KillErrorCode`
+- Types: `ProcessInfo`, `KillResult`, `CliOptions`, `PlatformAdapter`, `KillErrorCode`, `ProcessDetail`, `ProfileOptions`, `SlayConfig`
 
 <!-- json -->
 
@@ -322,6 +339,23 @@ src/
     exec.ts           Child process helpers
     errors.ts         Error types
 ```
+
+<!-- website -->
+
+## Website
+
+The landing page at [slay.fyniti.co.uk](https://slay.fyniti.co.uk) features:
+
+- **9 color themes** — Dark, Light, Blood, Synthwave, Matrix, Cyberpunk, Gruvbox, Arctic, Nebula
+- **Per-theme View Transitions** — unique animations when switching themes (blood drip, glitch dissolve, VHS wipe, frost crystallize, cosmic swirl, hologram glitch, TV static, and more)
+- **Canvas-based ambient effects** — blood rain, matrix falling characters, neon sparks, retro grid, cosmic dust, snowfall, fireflies — all rendered on a full-viewport canvas
+- **Per-theme hero synonyms** — rotating tagline changes personality with each theme
+- 10-language i18n support (EN, ZH, HI, ES, AR, FR, BN, PT, RU, JA) with RTL
+- Interactive terminal demos with animated kill sequences
+- Live stats from npm and GitHub APIs
+- Ambient visual effects (gradient mesh, cursor spotlight, scroll progress)
+- SVG feature icons with per-card hover animations
+- Responsive design with glassmorphism
 
 <!-- platform -->
 
