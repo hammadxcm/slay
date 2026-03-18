@@ -1,0 +1,247 @@
+---
+import { getTranslation } from '../i18n/index';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = getTranslation(locale);
+
+const stats = [
+  { number: 0, suffix: '+', label: t('stats.downloads'), color: 'var(--red)', api: 'npm' },
+  { number: 0, suffix: '', label: t('stats.stars'), color: 'var(--yellow)', api: 'github' },
+  { number: 0, suffix: '', label: t('stats.deps'), color: 'var(--green)' },
+  { number: 3, suffix: '', label: t('stats.platforms'), color: 'var(--cyan)' },
+  { number: 267, suffix: '+', label: t('stats.tests'), color: 'var(--yellow)' },
+  { number: 10, suffix: '', label: t('stats.languages'), color: 'var(--red)' },
+];
+---
+
+<section class="stats" aria-label="Project statistics">
+  <div class="container stats-grid">
+    {
+      stats.map((stat, i) => (
+        <div class="stat-card reveal" style={`--accent: ${stat.color}; --delay: ${i * 0.08}s`}>
+          <span
+            class="stat-number"
+            data-target={stat.number}
+            data-suffix={stat.suffix}
+            data-api={stat.api}
+          >
+            {stat.api ? '\u2014' : `0${stat.suffix}`}
+          </span>
+          <span class="stat-label">{stat.label}</span>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .stats {
+    padding: 64px 0;
+    position: relative;
+  }
+
+  .stats::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .stat-card {
+    text-align: center;
+    padding: 32px 16px;
+    border-radius: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    transition:
+      transform 0.2s,
+      box-shadow 0.2s,
+      border-color 0.2s;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 8px 30px var(--card-shadow),
+      0 0 40px color-mix(in srgb, var(--accent) 15%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 3rem;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    background: linear-gradient(135deg, var(--accent), var(--text));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-number.loading {
+    animation: pulse-stat 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-stat {
+    0%,
+    100% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .stat-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 1024px) {
+    .stats-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .stat-number {
+      font-size: 2.2rem;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .stat-card {
+      padding: 20px 12px;
+    }
+
+    .stat-number {
+      font-size: 1.8rem;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+    }
+  }
+</style>
+
+<script>
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function animateCounter(el: HTMLElement, target: number, suffix: string) {
+    el.classList.remove('loading');
+    if (reducedMotion || target === 0) {
+      el.textContent = `${target}${suffix}`;
+      return;
+    }
+    let current = 0;
+    const duration = 1500;
+    const totalSteps = Math.min(target, 40);
+    const increment = Math.max(1, Math.ceil(target / totalSteps));
+    const stepTime = duration / totalSteps;
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+      }
+      el.textContent = `${current}${suffix}`;
+    }, stepTime);
+  }
+
+  function observeAndAnimate(el: HTMLElement, target: number, suffix: string) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          animateCounter(entry.target as HTMLElement, target, suffix);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.3 },
+    );
+    observer.observe(el);
+  }
+
+  // Static counters
+  for (const el of document.querySelectorAll<HTMLElement>('.stat-number:not([data-api])')) {
+    const target = Number.parseInt(el.dataset.target || '0', 10);
+    const suffix = el.dataset.suffix || '';
+    observeAndAnimate(el, target, suffix);
+  }
+
+  // Dynamic counters — fetch from npm + GitHub APIs
+  const dynamicEls = document.querySelectorAll<HTMLElement>('.stat-number[data-api]');
+  for (const el of dynamicEls) el.classList.add('loading');
+
+  async function fetchDynamicStats() {
+    const [npmRes, ghRes] = await Promise.allSettled([
+      fetch('https://api.npmjs.org/downloads/point/2020-01-01:2030-01-01/slay-port').then((r) =>
+        r.json(),
+      ),
+      fetch('https://api.github.com/repos/hammadxcm/slay').then((r) => r.json()),
+    ]);
+
+    for (const el of dynamicEls) {
+      const api = el.dataset.api;
+      const suffix = el.dataset.suffix || '';
+      let value = 0;
+
+      if (api === 'npm' && npmRes.status === 'fulfilled') {
+        value = npmRes.value.downloads || 0;
+      } else if (api === 'github' && ghRes.status === 'fulfilled') {
+        value = ghRes.value.stargazers_count || 0;
+      }
+
+      el.dataset.target = String(value);
+
+      // If already in viewport, animate now; otherwise wait
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        animateCounter(el, value, suffix);
+      } else {
+        observeAndAnimate(el, value, suffix);
+      }
+    }
+  }
+
+  fetchDynamicStats().catch(() => {
+    for (const el of dynamicEls) {
+      el.classList.remove('loading');
+      el.textContent = '\u2014';
+    }
+  });
+</script>

@@ -90,10 +90,10 @@
 @keyframes pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--red) 40%, transparent);
   }
   50% {
-    box-shadow: 0 0 20px 4px rgba(255, 107, 107, 0.15);
+    box-shadow: 0 0 20px 4px color-mix(in srgb, var(--red) 15%, transparent);
   }
 }
 
@@ -201,6 +201,61 @@
   }
   100% {
     transform: translateY(100%);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-15px) rotate(2deg);
+  }
+  66% {
+    transform: translateY(8px) rotate(-1deg);
+  }
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px color-mix(in srgb, var(--red) 15%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 40px color-mix(in srgb, var(--red) 30%, transparent), 0 0 60px
+      color-mix(in srgb, var(--red) 10%, transparent);
+  }
+}
+
+@keyframes blob-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.05);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+}
+
+@keyframes gradient-border-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
   }
 }
 

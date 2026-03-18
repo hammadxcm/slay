@@ -61,6 +61,13 @@ const links = [
     background: var(--nav-bg);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
+    transition: background 0.3s, backdrop-filter 0.3s, box-shadow 0.3s;
+  }
+
+  .navbar.scrolled {
+    background: var(--nav-bg-scrolled);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 1px 20px var(--card-shadow);
   }
 
   .navbar-inner {
@@ -107,11 +114,27 @@ const links = [
     min-height: 44px;
     display: flex;
     align-items: center;
+    position: relative;
   }
 
   .nav-link:hover {
     color: var(--text);
     opacity: 1;
+  }
+
+  .nav-link.active {
+    color: var(--text);
+  }
+
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--red);
+    border-radius: 1px;
   }
 
   .nav-link--github {
@@ -181,6 +204,10 @@ const links = [
     .navbar-links.is-open {
       max-height: 400px;
       padding: 16px 24px;
+    }
+
+    .nav-link.active::after {
+      display: none;
     }
 
     .nav-link {
@@ -271,4 +298,35 @@ const links = [
   if (!isMobileMenu()) {
     navLinks?.setAttribute('aria-hidden', 'false');
   }
+
+  // Scroll-aware navbar
+  const navbar = document.getElementById('navbar');
+  let navTicking = false;
+  window.addEventListener('scroll', () => {
+    if (!navTicking) {
+      requestAnimationFrame(() => {
+        navbar?.classList.toggle('scrolled', window.scrollY > 50);
+        navTicking = false;
+      });
+      navTicking = true;
+    }
+  });
+
+  // Active section indicator
+  const sections = document.querySelectorAll<HTMLElement>('section[id]');
+  const sectionLinks = navLinks?.querySelectorAll<HTMLAnchorElement>('a.nav-link[href^="#"]') ?? [];
+  const sectionObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          for (const link of sectionLinks) {
+            link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+          }
+        }
+      }
+    },
+    { rootMargin: '-20% 0px -60% 0px' },
+  );
+  for (const section of sections) sectionObserver.observe(section);
 </script>

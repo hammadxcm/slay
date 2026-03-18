@@ -1,21 +1,27 @@
 ---
 import Api from '../components/Api.astro';
+import Comparison from '../components/Comparison.astro';
 import Demo from '../components/Demo.astro';
 import Features from '../components/Features.astro';
 import Footer from '../components/Footer.astro';
 import Hero from '../components/Hero.astro';
 import Install from '../components/Install.astro';
+import Marquee from '../components/Marquee.astro';
 import Navbar from '../components/Navbar.astro';
+import Stats from '../components/Stats.astro';
 import Layout from '../layouts/Layout.astro';
 
 const locale = 'en';
 ---
 
-<Layout title="slay — Kill processes by port. Beautifully." locale={locale} canonicalUrl="https://slay.fyniti.co.uk/">
+<Layout title="slay — kill processes by port. Beautifully." locale={locale} canonicalUrl="https://slay.fyniti.co.uk/">
   <Navbar locale={locale} />
   <main id="main-content">
     <Hero locale={locale} />
+    <Marquee />
+    <Stats locale={locale} />
     <Features locale={locale} />
+    <Comparison locale={locale} />
     <Install locale={locale} />
     <Demo locale={locale} />
     <Api locale={locale} />

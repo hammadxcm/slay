@@ -258,6 +258,27 @@ const apiCommand = "import { findByPort, killProcess } from 'slay-port'";
     .install-grid {
       grid-template-columns: 1fr;
     }
+
+    .install-block {
+      padding: 16px;
+    }
+
+    .install-code {
+      font-size: 0.75rem;
+      padding: 10px 12px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .pm-tab-btn {
+      padding: 8px 12px;
+      font-size: 0.75rem;
+    }
+
+    .install-code code {
+      word-break: break-all;
+      white-space: normal;
+    }
   }
 </style>
 
