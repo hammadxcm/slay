@@ -18,7 +18,7 @@ const t = getTranslation(locale);
         <span class="footer-name">slay</span>
       </div>
       <p class="footer-tagline">{t('footer.tagline')}</p>
-      <p class="footer-credit">{t('footer.made')}</p>
+      <p class="footer-credit"><a href="https://github.com/hammadxcm" target="_blank" rel="noopener noreferrer" class="footer-credit-link">{t('footer.made')}<span class="sr-only">(opens in new tab)</span></a></p>
     </div>
     <div class="footer-center">
       <h4 class="footer-heading">Links</h4>
@@ -110,6 +110,16 @@ const t = getTranslation(locale);
     color: var(--text-muted);
     font-size: 0.8rem;
     margin-top: 4px;
+  }
+
+  .footer-credit-link {
+    color: var(--text-muted);
+    transition: color 0.2s;
+  }
+
+  .footer-credit-link:hover {
+    color: var(--text);
+    opacity: 1;
   }
 
   .footer-center {

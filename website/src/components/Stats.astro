@@ -9,8 +9,22 @@ const { locale = 'en' } = Astro.props;
 const t = getTranslation(locale);
 
 const stats = [
-  { number: 0, suffix: '+', label: t('stats.downloads'), color: 'var(--red)', api: 'npm' },
-  { number: 0, suffix: '', label: t('stats.stars'), color: 'var(--yellow)', api: 'github' },
+  {
+    number: 0,
+    suffix: '+',
+    label: t('stats.downloads'),
+    color: 'var(--red)',
+    api: 'npm',
+    url: 'https://www.npmjs.com/package/slay-port',
+  },
+  {
+    number: 0,
+    suffix: '',
+    label: t('stats.stars'),
+    color: 'var(--yellow)',
+    api: 'github',
+    url: 'https://github.com/hammadxcm/slay',
+  },
   { number: 0, suffix: '', label: t('stats.deps'), color: 'var(--green)' },
   { number: 3, suffix: '', label: t('stats.platforms'), color: 'var(--cyan)' },
   { number: 267, suffix: '+', label: t('stats.tests'), color: 'var(--yellow)' },
@@ -21,19 +35,31 @@ const stats = [
 <section class="stats" aria-label="Project statistics">
   <div class="container stats-grid">
     {
-      stats.map((stat, i) => (
-        <div class="stat-card reveal" style={`--accent: ${stat.color}; --delay: ${i * 0.08}s`}>
-          <span
-            class="stat-number"
-            data-target={stat.number}
-            data-suffix={stat.suffix}
-            data-api={stat.api}
-          >
-            {stat.api ? '\u2014' : `0${stat.suffix}`}
-          </span>
-          <span class="stat-label">{stat.label}</span>
-        </div>
-      ))
+      stats.map((stat, i) => {
+        const inner = (
+          <>
+            <span
+              class="stat-number"
+              data-target={stat.number}
+              data-suffix={stat.suffix}
+              data-api={stat.api}
+            >
+              {stat.api ? '\u2014' : `0${stat.suffix}`}
+            </span>
+            <span class="stat-label">{stat.label}</span>
+          </>
+        );
+        return stat.url ? (
+          <a href={stat.url} target="_blank" rel="noopener noreferrer" class="stat-card stat-card--link reveal" style={`--accent: ${stat.color}; --delay: ${i * 0.08}s`}>
+            {inner}
+            <span class="sr-only">(opens in new tab)</span>
+          </a>
+        ) : (
+          <div class="stat-card reveal" style={`--accent: ${stat.color}; --delay: ${i * 0.08}s`}>
+            {inner}
+          </div>
+        );
+      })
     }
   </div>
 </section>
@@ -71,6 +97,12 @@ const stats = [
       transform 0.2s,
       box-shadow 0.2s,
       border-color 0.2s;
+  }
+
+  .stat-card--link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
   }
 
   .stat-card:hover {
