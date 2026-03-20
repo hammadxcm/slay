@@ -1,6 +1,6 @@
 {
   "name": "@hammadxcm/slay",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "exports": {
     ".": "./src/api.ts"
   },
