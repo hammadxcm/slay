@@ -12,26 +12,34 @@ import { PROC_NODE, mockAdapter, withMockPlatform } from './helpers.js';
 const proc = PROC_NODE;
 
 describe('KILL_WAIT_MS win32 branch', () => {
-  it('module loads with win32 platform and sets KILL_WAIT_MS to 500', async () => {
-    // Import the module fresh with win32 platform to cover the win32 branch
-    withMockPlatform('win32', () => {
-      // The branch was already evaluated at module load time
-      // We verify the code covers the branch by importing the module
-      // Since the module is already loaded, the branch is covered by the non-win32 path
-      // We need to force re-import
-    });
-
-    // Re-import with win32 platform
+  it('uses shorter wait on win32 (500ms vs 1500ms)', async () => {
     const originalPlatform = process.platform;
     Object.defineProperty(process, 'platform', { value: 'win32', configurable: true });
     try {
-      // Reset the module cache for killer.js so it re-evaluates the branch
       vi.resetModules();
-      const killerModule = await import('../src/core/killer.js');
-      expect(typeof killerModule.killProcess).toBe('function');
+      // Re-mock tree module for the fresh import
+      vi.doMock('../src/core/tree.js', () => ({
+        findDescendants: vi.fn(async () => []),
+      }));
+      const { killProcess: win32KillProcess } = await import('../src/core/killer.js');
+
+      // Use fake timers to verify the wait duration
+      vi.useFakeTimers();
+      const adapter = mockAdapter({
+        // Process stays alive so soft mode runs through the full wait
+        isAlive: vi.fn(async () => true),
+      });
+      const proc = { pid: 1, port: 80, state: 'LISTEN' };
+      const promise = win32KillProcess(adapter, proc, { soft: true });
+
+      // Advance past the 500ms win32 wait (with polling interval)
+      await vi.advanceTimersByTimeAsync(600);
+      const result = await promise;
+      expect(result.signal).toBe('SIGKILL (escalated)');
+
+      vi.useRealTimers();
     } finally {
       Object.defineProperty(process, 'platform', { value: originalPlatform, configurable: true });
-      // Reset modules again to restore normal state
       vi.resetModules();
     }
   });

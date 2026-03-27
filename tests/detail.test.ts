@@ -173,7 +173,7 @@ describe('getProcessDetail (windows PowerShell fallback)', () => {
     await withMockPlatformAsync('win32', async () => {
       const detail = await getProcessDetail(1234);
       expect(detail).not.toBeNull();
-      expect(detail?.cpu).toBe('12.5%');
+      expect(detail?.cpu).toBe('12.5s');
       expect(detail?.memory).toBe('100MB');
       expect(detail?.user).toBe('myuser');
     });
@@ -193,7 +193,7 @@ describe('getProcessDetail (windows PowerShell fallback)', () => {
     await withMockPlatformAsync('win32', async () => {
       const detail = await getProcessDetail(1234);
       expect(detail).not.toBeNull();
-      expect(detail?.cpu).toBe('5.0%');
+      expect(detail?.cpu).toBe('5.0s');
       expect(detail?.memory).toBe('50MB');
     });
   });
@@ -249,7 +249,7 @@ describe('getProcessDetail (windows PowerShell fallback)', () => {
     });
     await withMockPlatformAsync('win32', async () => {
       const detail = await getProcessDetail(1234);
-      expect(detail?.cpu).toBe('0.0%');
+      expect(detail?.cpu).toBe('0.0s');
     });
   });
 

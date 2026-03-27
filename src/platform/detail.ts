@@ -114,8 +114,9 @@ async function getWindowsDetailPowerShell(pid: number): Promise<ProcessDetail | 
     const parts = lines[1].replace(/"/g, '').split(',');
     if (parts.length < 2) return null;
 
+    // Get-Process CPU is cumulative processor seconds, not a percentage
     const cpuSeconds = Number.parseFloat(parts[0]) || 0;
-    const cpu = `${cpuSeconds.toFixed(1)}%`;
+    const cpu = `${cpuSeconds.toFixed(1)}s`;
     const wsBytes = Number.parseInt(parts[1], 10);
     const memory = Number.isNaN(wsBytes) ? '0KB' : formatMemory(Math.round(wsBytes / 1024));
 

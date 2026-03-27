@@ -39,47 +39,60 @@ describe('findConfig', () => {
     expect(result === null || typeof result === 'string').toBe(true);
   });
 
-  it('finds config in home directory as fallback', () => {
-    const home = homedir();
-    const homeConfig = join(home, '.slay.json');
-    const hadConfig = existsSync(homeConfig);
-
-    if (!hadConfig) {
-      writeFileSync(homeConfig, '{"profiles":{}}');
-    }
+  it('finds config in home directory as fallback', async () => {
+    // Use a temp dir as fake home to avoid touching the real home directory
+    const fakeHome = mkdtempSync(join(tmpdir(), 'slay-fakehome-'));
+    writeFileSync(join(fakeHome, '.slay.json'), '{"profiles":{}}');
+    const deepDir = mkdtempSync(join(tmpdir(), 'slay-deep-'));
 
     try {
-      // Search from a deep temp dir that won't find .slay.json on the way up
-      const deepDir = mkdtempSync(join(tmpdir(), 'slay-deep-'));
-      const result = findConfig(deepDir);
-      // It should find the config in the home directory
-      expect(result).toBe(homeConfig);
-      rmSync(deepDir, { recursive: true, force: true });
+      vi.resetModules();
+      vi.doMock('node:os', async (importOriginal) => {
+        const original = await importOriginal<typeof import('node:os')>();
+        return { ...original, homedir: () => fakeHome };
+      });
+
+      const { findConfig: mockedFindConfig } = await import('../src/config.js');
+      const result = mockedFindConfig(deepDir);
+      expect(result).toBe(join(fakeHome, '.slay.json'));
     } finally {
-      if (!hadConfig) {
-        rmSync(homeConfig, { force: true });
-      }
+      vi.resetModules();
+      rmSync(fakeHome, { recursive: true, force: true });
+      rmSync(deepDir, { recursive: true, force: true });
     }
   });
 
   it('skips home fallback when root equals home', async () => {
-    // Mock homedir to return '/' so that root === home when starting from '/'
     vi.resetModules();
     vi.doMock('node:os', async (importOriginal) => {
       const original = await importOriginal<typeof import('node:os')>();
-      return {
-        ...original,
-        homedir: () => '/',
-      };
+      return { ...original, homedir: () => '/' };
     });
 
     const { findConfig: mockedFindConfig } = await import('../src/config.js');
-    // Starting from '/', root will be '/' and home will be '/' (mocked)
-    // So root !== home is false, skipping the home fallback
     const result = mockedFindConfig('/');
     expect(result).toBeNull();
 
     vi.resetModules();
+  });
+
+  it('returns null from root when no config anywhere', async () => {
+    const fakeHome = mkdtempSync(join(tmpdir(), 'slay-fakehome-'));
+
+    try {
+      vi.resetModules();
+      vi.doMock('node:os', async (importOriginal) => {
+        const original = await importOriginal<typeof import('node:os')>();
+        return { ...original, homedir: () => fakeHome };
+      });
+
+      const { findConfig: mockedFindConfig } = await import('../src/config.js');
+      const result = mockedFindConfig('/');
+      expect(result).toBeNull();
+    } finally {
+      vi.resetModules();
+      rmSync(fakeHome, { recursive: true, force: true });
+    }
   });
 });
 

@@ -2,7 +2,6 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../src/utils/exec.js', () => ({
   exec: vi.fn(),
-  isWmicAvailable: vi.fn(async () => true),
 }));
 
 import { createWindowsAdapter, windows } from '../src/platform/windows.js';

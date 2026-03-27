@@ -138,54 +138,32 @@ describe('textInput', () => {
 
   it('returns user input when TTY', async () => {
     mockIsTTY = true;
-    const { createInterface } = await import('node:readline');
 
-    // We need to mock createInterface to simulate user input
-    const { createInterface: realCreateInterface } =
-      await vi.importActual<typeof import('node:readline')>('node:readline');
-
-    // Create a mock that simulates the question callback
     const originalStdin = process.stdin;
     const originalStdout = process.stdout;
 
-    // Use a simpler approach: mock the readline module
-    const mockRl = {
-      question: vi.fn((_msg: string, cb: (answer: string) => void) => {
-        cb('test-answer');
-      }),
-      close: vi.fn(),
-    };
+    try {
+      const { Readable, Writable } = await import('node:stream');
+      const mockInput = new Readable({
+        read() {
+          this.push('hello-world\n');
+          this.push(null);
+        },
+      });
+      const mockOutput = new Writable({
+        write(_chunk, _encoding, callback) {
+          callback();
+        },
+      });
 
-    // We can test the non-TTY path which is the critical coverage gap
-    // The TTY path requires complex readline mocking
-    // For TTY, the function creates a readline interface and calls question
-    // Let's test it works by calling with TTY mode
+      Object.defineProperty(process, 'stdin', { value: mockInput, configurable: true });
+      Object.defineProperty(process, 'stdout', { value: mockOutput, configurable: true });
 
-    // Instead, we'll mock createInterface at the module level
-    // Since textInput is already imported, let's use a different approach
-    // The key insight: the function creates a readline interface from process.stdin/stdout
-    // We can provide a mock stdin that responds to the readline protocol
-
-    const { Readable, Writable } = await import('node:stream');
-    const mockInput = new Readable({
-      read() {
-        this.push('hello-world\n');
-        this.push(null);
-      },
-    });
-    const mockOutput = new Writable({
-      write(_chunk, _encoding, callback) {
-        callback();
-      },
-    });
-
-    Object.defineProperty(process, 'stdin', { value: mockInput, configurable: true });
-    Object.defineProperty(process, 'stdout', { value: mockOutput, configurable: true });
-
-    const result = await textInput('Enter: ');
-    expect(result).toBe('hello-world');
-
-    Object.defineProperty(process, 'stdin', { value: originalStdin, configurable: true });
-    Object.defineProperty(process, 'stdout', { value: originalStdout, configurable: true });
+      const result = await textInput('Enter: ');
+      expect(result).toBe('hello-world');
+    } finally {
+      Object.defineProperty(process, 'stdin', { value: originalStdin, configurable: true });
+      Object.defineProperty(process, 'stdout', { value: originalStdout, configurable: true });
+    }
   });
 });
