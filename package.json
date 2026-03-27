@@ -43,7 +43,7 @@
   },
   "homepage": "https://slay.fyniti.co.uk",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.0",
