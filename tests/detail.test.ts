@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../src/utils/exec.js', () => ({
   exec: vi.fn(),
@@ -282,6 +282,16 @@ describe('getProcessDetail (windows PowerShell fallback)', () => {
 });
 
 describe('getProcessDetail (unix)', () => {
+  const originalPlatform = process.platform;
+
+  beforeEach(() => {
+    Object.defineProperty(process, 'platform', { value: 'darwin', configurable: true });
+  });
+
+  afterEach(() => {
+    Object.defineProperty(process, 'platform', { value: originalPlatform, configurable: true });
+  });
+
   it('returns null on empty output', async () => {
     mockedExec.mockResolvedValue({ stdout: '', stderr: '' });
     const detail = await getProcessDetail(1234);

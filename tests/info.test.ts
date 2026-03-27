@@ -18,7 +18,7 @@ import { findByPorts } from '../src/core/discovery.js';
 import { findChildren } from '../src/core/tree.js';
 import { getProcessDetail } from '../src/platform/detail.js';
 
-describe('getProcessDetail (real)', () => {
+describe.skipIf(process.platform === 'win32')('getProcessDetail (real)', () => {
   it('returns null when process not found', async () => {
     const { getProcessDetail: realGetProcessDetail } = await vi.importActual<
       typeof import('../src/platform/detail.js')
@@ -32,13 +32,11 @@ describe('getProcessDetail (real)', () => {
       typeof import('../src/platform/detail.js')
     >('../src/platform/detail.js');
     const detail = await realGetProcessDetail(process.pid);
-    if (process.platform !== 'win32') {
-      expect(detail).not.toBeNull();
-      expect(detail?.cpu).toBeDefined();
-      expect(detail?.memory).toBeDefined();
-      expect(detail?.user).toBeDefined();
-      expect(detail?.uptime).toBeDefined();
-    }
+    expect(detail).not.toBeNull();
+    expect(detail?.cpu).toBeDefined();
+    expect(detail?.memory).toBeDefined();
+    expect(detail?.user).toBeDefined();
+    expect(detail?.uptime).toBeDefined();
   });
 });
 
