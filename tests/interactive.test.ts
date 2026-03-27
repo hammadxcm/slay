@@ -318,6 +318,58 @@ describe('selectProcesses', () => {
     expect(result).toHaveLength(0);
     cleanup();
   });
+
+  it('ignores control characters in search mode that do not match handlers', async () => {
+    mockIsTTY = true;
+    const { mockStdin, cleanup } = setupTTY();
+
+    const promise = selectProcesses(procs);
+    mockStdin.emit('data', '/'); // enter search
+    mockStdin.emit('data', 'n');
+    // Send a control character that doesn't match any handler (e.g., \x01 = Ctrl+A)
+    mockStdin.emit('data', '\x01');
+    mockStdin.emit('data', '\r'); // confirm search
+    mockStdin.emit('data', ' '); // toggle
+    mockStdin.emit('data', '\r'); // confirm
+    const result = await promise;
+
+    // Only 'n' was typed as search, \x01 was ignored (key < ' ')
+    expect(result).toHaveLength(1);
+    expect(result[0].pid).toBe(100); // node matches 'n'
+    cleanup();
+  });
+
+  it('ignores space toggle when no visible items', async () => {
+    mockIsTTY = true;
+    const { mockStdin, cleanup } = setupTTY();
+
+    const promise = selectProcesses(procs);
+    mockStdin.emit('data', '/'); // enter search
+    mockStdin.emit('data', 'z');
+    mockStdin.emit('data', 'z');
+    mockStdin.emit('data', 'z'); // no results
+    mockStdin.emit('data', '\r'); // confirm search (stay in select mode with no visible)
+    mockStdin.emit('data', ' '); // toggle - should be ignored since no visible items
+    mockStdin.emit('data', '\r'); // confirm selection
+    const result = await promise;
+
+    expect(result).toHaveLength(0);
+    cleanup();
+  });
+
+  it('Ctrl+C exits during search mode', async () => {
+    mockIsTTY = true;
+    const { mockStdin, cleanup } = setupTTY();
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+
+    selectProcesses(procs);
+    mockStdin.emit('data', '/'); // enter search
+    mockStdin.emit('data', '\u0003'); // Ctrl+C during search
+
+    expect(exitSpy).toHaveBeenCalledWith(130);
+    exitSpy.mockRestore();
+    cleanup();
+  });
 });
 
 describe('filterProcesses', () => {

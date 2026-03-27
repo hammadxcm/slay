@@ -21,5 +21,5 @@ export class SlayError extends Error {
 }
 
 export function isPermissionError(stderr: string): boolean {
-  return /permission denied|operation not permitted|access denied|eperm/i.test(stderr);
+  return /permission denied|operation not permitted|access\s*(is\s*)?denied|eperm/i.test(stderr);
 }

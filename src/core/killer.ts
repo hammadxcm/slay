@@ -2,7 +2,7 @@ import type { KillResult, PlatformAdapter, ProcessInfo } from '../types.js';
 import { KillErrorCode, SlayError } from '../utils/errors.js';
 import { findDescendants } from './tree.js';
 
-const KILL_WAIT_MS = 1500;
+const KILL_WAIT_MS = process.platform === 'win32' ? 500 : 1500;
 const POLL_INTERVAL_MS = 100;
 
 async function waitForDeath(

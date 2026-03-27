@@ -1,5 +1,5 @@
 import type { ProcessDetail } from '../types.js';
-import { exec } from '../utils/exec.js';
+import { exec, isWmicAvailable } from '../utils/exec.js';
 
 function formatMemory(rssKb: number): string {
   if (rssKb >= 1024 * 1024) return `${(rssKb / (1024 * 1024)).toFixed(1)}GB`;
@@ -63,11 +63,19 @@ async function getUnixDetail(pid: number): Promise<ProcessDetail | null> {
 }
 
 async function getWindowsDetail(pid: number): Promise<ProcessDetail | null> {
+  const useWmic = await isWmicAvailable();
+  if (useWmic) {
+    return getWindowsDetailWmic(pid);
+  }
+  return getWindowsDetailPowerShell(pid);
+}
+
+async function getWindowsDetailWmic(pid: number): Promise<ProcessDetail | null> {
   try {
     const { stdout } = await exec(
       `wmic process where ProcessId=${pid} get PercentProcessorTime,WorkingSetSize,Name /format:csv 2>nul`,
     );
-    const lines = stdout.trim().split('\n').filter(Boolean);
+    const lines = stdout.trim().split(/\r?\n/).filter(Boolean);
     if (lines.length < 2) return null;
 
     const parts = lines[1].split(',');
@@ -85,6 +93,39 @@ async function getWindowsDetail(pid: number): Promise<ProcessDetail | null> {
       );
       const userMatch = userOut.match(/(\w+)\\(\w+)/);
       if (userMatch) user = userMatch[2];
+    } catch {
+      // ignore
+    }
+
+    return { cpu, memory, user, uptime: '' };
+  } catch {
+    return null;
+  }
+}
+
+async function getWindowsDetailPowerShell(pid: number): Promise<ProcessDetail | null> {
+  try {
+    const { stdout } = await exec(
+      `powershell -NoProfile -Command "Get-Process -Id ${pid} -ErrorAction SilentlyContinue | Select-Object CPU,WorkingSet64 | ConvertTo-Csv -NoTypeInformation"`,
+    );
+    const lines = stdout.trim().split(/\r?\n/).filter(Boolean);
+    if (lines.length < 2) return null;
+
+    const parts = lines[1].replace(/"/g, '').split(',');
+    if (parts.length < 2) return null;
+
+    const cpuSeconds = Number.parseFloat(parts[0]) || 0;
+    const cpu = `${cpuSeconds.toFixed(1)}%`;
+    const wsBytes = Number.parseInt(parts[1], 10);
+    const memory = Number.isNaN(wsBytes) ? '0KB' : formatMemory(Math.round(wsBytes / 1024));
+
+    // Get owner
+    let user = '';
+    try {
+      const { stdout: ownerOut } = await exec(
+        `powershell -NoProfile -Command "(Get-CimInstance Win32_Process -Filter 'ProcessId=${pid}').GetOwner().User"`,
+      );
+      user = ownerOut.trim();
     } catch {
       // ignore
     }

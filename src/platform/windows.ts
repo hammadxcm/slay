@@ -48,7 +48,7 @@ export function createWindowsAdapter(protocol: Protocol = 'tcp'): PlatformAdapte
     async findByPort(port: number): Promise<ProcessInfo[]> {
       try {
         const { stdout } = await exec(`netstat -ano -p ${netstatProto}`);
-        const lines = stdout.trim().split('\n');
+        const lines = stdout.trim().split(/\r?\n/);
         const parseLine = (line: string) => {
           const info = parseNetstatLine(line, !isUdp);
           return info && info.port === port ? info : null;
@@ -66,7 +66,7 @@ export function createWindowsAdapter(protocol: Protocol = 'tcp'): PlatformAdapte
     async findAllListening(): Promise<ProcessInfo[]> {
       try {
         const { stdout } = await exec(`netstat -ano -p ${netstatProto}`);
-        const lines = stdout.trim().split('\n');
+        const lines = stdout.trim().split(/\r?\n/);
         const results = deduplicateByPid(lines, (line) => parseNetstatLine(line, !isUdp), protocol);
         for (const info of results) {
           info.command = await getProcessName(info.pid);
@@ -81,12 +81,24 @@ export function createWindowsAdapter(protocol: Protocol = 'tcp'): PlatformAdapte
       try {
         const cmd = signal === 'SIGKILL' ? `taskkill /PID ${pid} /F` : `taskkill /PID ${pid}`;
         const { stderr } = await exec(cmd);
-        if (stderr && isPermissionError(stderr)) {
-          throw new SlayError(KillErrorCode.PERMISSION_DENIED, `PID ${pid}`);
+        if (stderr) {
+          if (isPermissionError(stderr)) {
+            throw new SlayError(KillErrorCode.PERMISSION_DENIED, `PID ${pid}`);
+          }
+          if (/not found/i.test(stderr)) {
+            return true;
+          }
+          if (/could not be terminated/i.test(stderr)) {
+            return false;
+          }
         }
         return true;
       } catch (error) {
         if (error instanceof SlayError) throw error;
+        const err = error as { stderr?: string };
+        if (err.stderr && isPermissionError(err.stderr)) {
+          throw new SlayError(KillErrorCode.PERMISSION_DENIED, `PID ${pid}`);
+        }
         return false;
       }
     },

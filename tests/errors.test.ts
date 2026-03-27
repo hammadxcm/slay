@@ -42,6 +42,10 @@ describe('isPermissionError', () => {
     expect(isPermissionError('Access Denied')).toBe(true);
   });
 
+  it('detects "access is denied" (Windows taskkill)', () => {
+    expect(isPermissionError('Access is denied')).toBe(true);
+  });
+
   it('detects "EPERM"', () => {
     expect(isPermissionError('EPERM: not allowed')).toBe(true);
   });

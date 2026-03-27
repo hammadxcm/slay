@@ -1,6 +1,6 @@
 {
   "name": "slay-port",
-  "version": "0.1.31",
+  "version": "0.1.32",
   "description": "kill processes by port. Beautifully.",
   "type": "module",
   "bin": {
@@ -48,12 +48,12 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.0",
     "@types/node": "^25.3.3",
-    "@vitest/coverage-v8": "^2.1.9",
+    "@vitest/coverage-v8": "^4.1.2",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "picocolors": "^1.1.0",
     "tsup": "^8.3.0",
     "typescript": "^5.6.0",
-    "vitest": "^2.1.0"
+    "vitest": "^4.1.2"
   }
 }

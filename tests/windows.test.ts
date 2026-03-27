@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../src/utils/exec.js', () => ({
   exec: vi.fn(),
+  isWmicAvailable: vi.fn(async () => true),
 }));
 
 import { createWindowsAdapter, windows } from '../src/platform/windows.js';
@@ -126,15 +127,64 @@ describe('windows.kill', () => {
     await expect(windows.kill(1234, 'SIGKILL')).rejects.toThrow(SlayError);
   });
 
+  it('returns true when process not found (already dead)', async () => {
+    mockedExec.mockResolvedValue({
+      stdout: '',
+      stderr: 'ERROR: The process with PID 1234 not found.',
+    });
+    const result = await windows.kill(1234, 'SIGKILL');
+    expect(result).toBe(true);
+  });
+
+  it('returns false when process could not be terminated', async () => {
+    mockedExec.mockResolvedValue({
+      stdout: '',
+      stderr: 'ERROR: The process with PID 1234 could not be terminated.',
+    });
+    const result = await windows.kill(1234, 'SIGKILL');
+    expect(result).toBe(false);
+  });
+
+  it('returns true when stderr has unrecognized non-error message', async () => {
+    mockedExec.mockResolvedValue({
+      stdout: '',
+      stderr: 'SUCCESS: Some informational message about pid 1234.',
+    });
+    const result = await windows.kill(1234, 'SIGKILL');
+    expect(result).toBe(true);
+  });
+
   it('returns false on other errors', async () => {
     mockedExec.mockRejectedValue(new Error('fail'));
     const result = await windows.kill(1234, 'SIGKILL');
     expect(result).toBe(false);
   });
 
+  it('throws SlayError on permission denied in catch path', async () => {
+    const err = new Error('fail') as Error & { stderr: string };
+    err.stderr = 'Access is denied';
+    mockedExec.mockRejectedValue(err);
+    await expect(windows.kill(1234, 'SIGKILL')).rejects.toThrow(SlayError);
+  });
+
   it('re-throws SlayError from exec', async () => {
     mockedExec.mockRejectedValue(new SlayError(KillErrorCode.PERMISSION_DENIED));
     await expect(windows.kill(1234, 'SIGKILL')).rejects.toThrow(SlayError);
+  });
+
+  it('returns false when catch error has no stderr property', async () => {
+    const err = new Error('some error without stderr');
+    mockedExec.mockRejectedValue(err);
+    const result = await windows.kill(1234, 'SIGKILL');
+    expect(result).toBe(false);
+  });
+
+  it('returns false when catch error has stderr but not permission error', async () => {
+    const err = new Error('fail') as Error & { stderr: string };
+    err.stderr = 'some other error message';
+    mockedExec.mockRejectedValue(err);
+    const result = await windows.kill(1234, 'SIGKILL');
+    expect(result).toBe(false);
   });
 });
 
@@ -249,5 +299,55 @@ describe('getProcessName (via findByPort)', () => {
     const result = await windows.findByPort(3000);
     expect(result).toHaveLength(1);
     expect(result[0].command).toBeUndefined();
+  });
+});
+
+describe('windows \\r\\n line endings', () => {
+  it('findByPort parses netstat with \\r\\n', async () => {
+    const lines = [NETSTAT_LISTENING, NETSTAT_LISTENING_2].join('\r\n');
+    mockedExec.mockImplementation(async (cmd: string) => {
+      if (cmd.startsWith('netstat')) {
+        return { stdout: lines, stderr: '' };
+      }
+      if (cmd.startsWith('tasklist /FI')) {
+        return { stdout: '"node.exe","1234","Console","1","12,345 K"', stderr: '' };
+      }
+      return { stdout: '', stderr: '' };
+    });
+    const result = await windows.findByPort(3000);
+    expect(result).toHaveLength(1);
+    expect(result[0].pid).toBe(1234);
+  });
+
+  it('findAllListening parses netstat with \\r\\n', async () => {
+    const lines = [NETSTAT_LISTENING, NETSTAT_LISTENING_2].join('\r\n');
+    mockedExec.mockImplementation(async (cmd: string) => {
+      if (cmd.startsWith('netstat')) {
+        return { stdout: lines, stderr: '' };
+      }
+      if (cmd.startsWith('tasklist /FI')) {
+        return { stdout: '"node.exe","1234","Console","1","12,345 K"', stderr: '' };
+      }
+      return { stdout: '', stderr: '' };
+    });
+    const result = await windows.findAllListening();
+    expect(result).toHaveLength(2);
+  });
+
+  it('handles IPv6 addresses in netstat', async () => {
+    const ipv6Line = '  TCP    [::1]:3000    [::]:0    LISTENING    1234';
+    mockedExec.mockImplementation(async (cmd: string) => {
+      if (cmd.startsWith('netstat')) {
+        return { stdout: ipv6Line, stderr: '' };
+      }
+      if (cmd.startsWith('tasklist /FI')) {
+        return { stdout: '"node.exe","1234","Console","1","12,345 K"', stderr: '' };
+      }
+      return { stdout: '', stderr: '' };
+    });
+    const result = await windows.findByPort(3000);
+    expect(result).toHaveLength(1);
+    expect(result[0].pid).toBe(1234);
+    expect(result[0].port).toBe(3000);
   });
 });

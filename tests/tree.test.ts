@@ -2,13 +2,15 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../src/utils/exec.js', () => ({
   exec: vi.fn(),
+  isWmicAvailable: vi.fn(async () => true),
 }));
 
 import { findChildren, findDescendants } from '../src/core/tree.js';
-import { exec } from '../src/utils/exec.js';
-import { withMockPlatform, withMockPlatformAsync } from './helpers.js';
+import { exec, isWmicAvailable } from '../src/utils/exec.js';
+import { withMockPlatformAsync } from './helpers.js';
 
 const mockedExec = vi.mocked(exec);
+const mockedIsWmicAvailable = vi.mocked(isWmicAvailable);
 
 describe('findChildren', () => {
   it('parses pgrep output on unix', async () => {
@@ -17,7 +19,14 @@ describe('findChildren', () => {
     expect(children).toEqual([2000, 2001]);
   });
 
+  it('parses pgrep output with \\r\\n on unix', async () => {
+    mockedExec.mockResolvedValue({ stdout: '2000\r\n2001\r\n', stderr: '' });
+    const children = await findChildren(1000);
+    expect(children).toEqual([2000, 2001]);
+  });
+
   it('parses wmic output on win32', async () => {
+    mockedIsWmicAvailable.mockResolvedValue(true);
     mockedExec.mockResolvedValue({
       stdout: 'Node,ProcessId\nMYPC,2000\nMYPC,2001\n',
       stderr: '',
@@ -31,7 +40,47 @@ describe('findChildren', () => {
     });
   });
 
+  it('parses wmic output with \\r\\n on win32', async () => {
+    mockedIsWmicAvailable.mockResolvedValue(true);
+    mockedExec.mockResolvedValue({
+      stdout: 'Node,ProcessId\r\nMYPC,2000\r\nMYPC,2001\r\n',
+      stderr: '',
+    });
+    await withMockPlatformAsync('win32', async () => {
+      const children = await findChildren(1000);
+      expect(children).toEqual([2000, 2001]);
+    });
+  });
+
+  it('uses PowerShell fallback when wmic unavailable on win32', async () => {
+    mockedIsWmicAvailable.mockResolvedValue(false);
+    mockedExec.mockResolvedValue({
+      stdout: '2000\r\n2001\r\n',
+      stderr: '',
+    });
+    await withMockPlatformAsync('win32', async () => {
+      const children = await findChildren(1000);
+      expect(children).toEqual([2000, 2001]);
+      expect(mockedExec).toHaveBeenCalledWith(
+        expect.stringContaining('Get-CimInstance Win32_Process'),
+      );
+    });
+  });
+
+  it('PowerShell fallback filters out parent pid', async () => {
+    mockedIsWmicAvailable.mockResolvedValue(false);
+    mockedExec.mockResolvedValue({
+      stdout: '1000\r\n2000\r\n',
+      stderr: '',
+    });
+    await withMockPlatformAsync('win32', async () => {
+      const children = await findChildren(1000);
+      expect(children).toEqual([2000]);
+    });
+  });
+
   it('filters out parent pid from wmic output', async () => {
+    mockedIsWmicAvailable.mockResolvedValue(true);
     mockedExec.mockResolvedValue({
       stdout: 'Node,ProcessId\nMYPC,1000\nMYPC,2000\n',
       stderr: '',
@@ -43,6 +92,7 @@ describe('findChildren', () => {
   });
 
   it('handles empty wmic lines', async () => {
+    mockedIsWmicAvailable.mockResolvedValue(true);
     mockedExec.mockResolvedValue({
       stdout: '\n\n',
       stderr: '',
@@ -57,6 +107,15 @@ describe('findChildren', () => {
     mockedExec.mockRejectedValue(new Error('fail'));
     const children = await findChildren(1000);
     expect(children).toEqual([]);
+  });
+
+  it('returns empty on win32 error', async () => {
+    mockedIsWmicAvailable.mockResolvedValue(true);
+    mockedExec.mockRejectedValue(new Error('fail'));
+    await withMockPlatformAsync('win32', async () => {
+      const children = await findChildren(1000);
+      expect(children).toEqual([]);
+    });
   });
 
   it('handles empty output', async () => {

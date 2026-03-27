@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { exec } from '../src/utils/exec.js';
+import { describe, expect, it, vi } from 'vitest';
+import { exec, isWmicAvailable, resetWmicCache } from '../src/utils/exec.js';
 
 describe('exec', () => {
   it('runs a simple command', async () => {
@@ -41,5 +41,58 @@ describe('exec', () => {
       // If it throws, verify it's an Error
       expect(error).toBeInstanceOf(Error);
     }
+  });
+});
+
+describe('isWmicAvailable', () => {
+  it('returns a boolean', async () => {
+    resetWmicCache();
+    const result = await isWmicAvailable();
+    expect(typeof result).toBe('boolean');
+  });
+
+  it('caches the result on subsequent calls', async () => {
+    resetWmicCache();
+    const first = await isWmicAvailable();
+    const second = await isWmicAvailable();
+    expect(first).toBe(second);
+  });
+
+  it('resetWmicCache clears cached value', async () => {
+    await isWmicAvailable();
+    resetWmicCache();
+    // After reset, it should re-probe (still returns boolean)
+    const result = await isWmicAvailable();
+    expect(typeof result).toBe('boolean');
+  });
+
+  it('returns true when wmic command succeeds', async () => {
+    // To cover line 31 (_wmicAvailable = true), we need to re-import exec.ts
+    // with child_process mocked so 'wmic' succeeds
+    vi.resetModules();
+
+    vi.doMock('node:child_process', () => ({
+      exec: (
+        _cmd: string,
+        _opts: unknown,
+        cb: (err: null, result: { stdout: string; stderr: string }) => void,
+      ) => {
+        cb(null, { stdout: 'Caption\nMicrosoft Windows 10', stderr: '' });
+        return {} as unknown;
+      },
+    }));
+
+    const { isWmicAvailable: mockedIsWmic, resetWmicCache: mockedReset } = await import(
+      '../src/utils/exec.js'
+    );
+    mockedReset();
+    const result = await mockedIsWmic();
+    expect(result).toBe(true);
+
+    // Verify caching
+    const cached = await mockedIsWmic();
+    expect(cached).toBe(true);
+
+    vi.resetModules();
   });
 });
