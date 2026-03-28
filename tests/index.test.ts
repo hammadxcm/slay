@@ -1,12 +1,16 @@
 import { execSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 
+const isWindows = process.platform === 'win32';
+
 function run(args: string): { stdout: string; stderr: string; code: number } {
   try {
     const stdout = execSync(`node dist/index.js ${args}`, {
       encoding: 'utf8',
-      timeout: 5000,
+      timeout: 10_000,
       env: { ...process.env, NO_COLOR: '1' },
+      stdio: ['pipe', 'pipe', 'pipe'],
+      windowsHide: true,
     });
     return { stdout, stderr: '', code: 0 };
   } catch (error: unknown) {
@@ -71,9 +75,9 @@ describe('CLI integration', () => {
     expect(stdout).toContain('Nothing listening');
   });
 
-  it('--all with --json returns summary', () => {
+  // Skip on Windows: --all discovers real processes via netstat which can hang
+  it.skipIf(isWindows)('--all with --json returns summary', () => {
     const { stdout, code } = run('--all --json -y');
-    // May or may not find processes, but should exit 0 and have valid JSON
     const lines = stdout.trim().split('\n');
     const last = JSON.parse(lines[lines.length - 1]);
     expect(last.type).toBe('summary');

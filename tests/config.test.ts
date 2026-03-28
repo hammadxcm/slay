@@ -1,7 +1,7 @@
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   DEFAULT_CONFIG,
   findConfig,
@@ -31,6 +31,68 @@ describe('findConfig', () => {
 
   it('returns null when no config exists', () => {
     expect(findConfig(tempDir)).toBeNull();
+  });
+
+  it('returns null when starting from root directory with no config', () => {
+    const result = findConfig('/');
+    // root directory may or may not have .slay.json, but should not crash
+    expect(result === null || typeof result === 'string').toBe(true);
+  });
+
+  it('finds config in home directory as fallback', async () => {
+    // Use a temp dir as fake home to avoid touching the real home directory
+    const fakeHome = mkdtempSync(join(tmpdir(), 'slay-fakehome-'));
+    writeFileSync(join(fakeHome, '.slay.json'), '{"profiles":{}}');
+    const deepDir = mkdtempSync(join(tmpdir(), 'slay-deep-'));
+
+    try {
+      vi.resetModules();
+      vi.doMock('node:os', async (importOriginal) => {
+        const original = await importOriginal<typeof import('node:os')>();
+        return { ...original, homedir: () => fakeHome };
+      });
+
+      const { findConfig: mockedFindConfig } = await import('../src/config.js');
+      const result = mockedFindConfig(deepDir);
+      expect(result).toBe(join(fakeHome, '.slay.json'));
+    } finally {
+      vi.resetModules();
+      rmSync(fakeHome, { recursive: true, force: true });
+      rmSync(deepDir, { recursive: true, force: true });
+    }
+  });
+
+  it('skips home fallback when root equals home', async () => {
+    vi.resetModules();
+    vi.doMock('node:os', async (importOriginal) => {
+      const original = await importOriginal<typeof import('node:os')>();
+      return { ...original, homedir: () => '/' };
+    });
+
+    const { findConfig: mockedFindConfig } = await import('../src/config.js');
+    const result = mockedFindConfig('/');
+    expect(result).toBeNull();
+
+    vi.resetModules();
+  });
+
+  it('returns null from root when no config anywhere', async () => {
+    const fakeHome = mkdtempSync(join(tmpdir(), 'slay-fakehome-'));
+
+    try {
+      vi.resetModules();
+      vi.doMock('node:os', async (importOriginal) => {
+        const original = await importOriginal<typeof import('node:os')>();
+        return { ...original, homedir: () => fakeHome };
+      });
+
+      const { findConfig: mockedFindConfig } = await import('../src/config.js');
+      const result = mockedFindConfig('/');
+      expect(result).toBeNull();
+    } finally {
+      vi.resetModules();
+      rmSync(fakeHome, { recursive: true, force: true });
+    }
   });
 });
 
@@ -102,6 +164,11 @@ describe('resolveProfile', () => {
     const config = { profiles: { dev: {}, prod: {} } };
     expect(() => resolveProfile(config, 'test')).toThrow('Available: dev, prod');
   });
+
+  it('shows (none) when no profiles exist', () => {
+    const config = { profiles: {} };
+    expect(() => resolveProfile(config, 'test')).toThrow('(none)');
+  });
 });
 
 describe('mergeProfileOpts', () => {
@@ -161,5 +228,63 @@ describe('mergeProfileOpts', () => {
     const profile: ProfileOptions = { ports: [3000] };
     mergeProfileOpts(baseOpts, profile);
     expect(baseOpts.ports).toEqual([]);
+  });
+
+  it('applies all profile boolean flags', () => {
+    const profile: ProfileOptions = {
+      force: true,
+      yes: true,
+      soft: true,
+      verbose: true,
+      all: true,
+      watch: true,
+      dryRun: true,
+      tree: true,
+    };
+    const merged = mergeProfileOpts(baseOpts, profile);
+    expect(merged.force).toBe(true);
+    expect(merged.yes).toBe(true);
+    expect(merged.soft).toBe(true);
+    expect(merged.verbose).toBe(true);
+    expect(merged.all).toBe(true);
+    expect(merged.watch).toBe(true);
+    expect(merged.dryRun).toBe(true);
+    expect(merged.tree).toBe(true);
+  });
+
+  it('does not override CLI flags already set to true', () => {
+    const opts = {
+      ...baseOpts,
+      force: true,
+      yes: true,
+      soft: true,
+      verbose: true,
+      all: true,
+      watch: true,
+      dryRun: true,
+      tree: true,
+      protocol: 'udp' as const,
+    };
+    const profile: ProfileOptions = {
+      force: true,
+      yes: true,
+      soft: true,
+      verbose: true,
+      all: true,
+      watch: true,
+      dryRun: true,
+      tree: true,
+      protocol: 'tcp',
+    };
+    const merged = mergeProfileOpts(opts, profile);
+    expect(merged.force).toBe(true);
+    expect(merged.protocol).toBe('udp');
+  });
+
+  it('does not apply profile protocol when CLI protocol is non-tcp', () => {
+    const opts = { ...baseOpts, protocol: 'udp' as const };
+    const profile: ProfileOptions = { protocol: 'tcp' };
+    const merged = mergeProfileOpts(opts, profile);
+    expect(merged.protocol).toBe('udp');
   });
 });

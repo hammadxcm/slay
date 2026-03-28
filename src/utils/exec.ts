@@ -21,3 +21,20 @@ export async function exec(
     throw error;
   }
 }
+
+let _wmicAvailable: boolean | null = null;
+
+export async function isWmicAvailable(): Promise<boolean> {
+  if (_wmicAvailable !== null) return _wmicAvailable;
+  try {
+    await execAsync('wmic os get Caption /format:csv', { timeout: 5000 });
+    _wmicAvailable = true;
+  } catch {
+    _wmicAvailable = false;
+  }
+  return _wmicAvailable;
+}
+
+export function resetWmicCache(): void {
+  _wmicAvailable = null;
+}

@@ -7,9 +7,43 @@ vi.mock('../src/core/tree.js', () => ({
 import { killAll, killProcess } from '../src/core/killer.js';
 import { findDescendants } from '../src/core/tree.js';
 import { KillErrorCode, SlayError } from '../src/utils/errors.js';
-import { PROC_NODE, mockAdapter } from './helpers.js';
+import { PROC_NODE, mockAdapter, withMockPlatform } from './helpers.js';
 
 const proc = PROC_NODE;
+
+describe('KILL_WAIT_MS win32 branch', () => {
+  it('uses shorter wait on win32 (500ms vs 1500ms)', async () => {
+    const originalPlatform = process.platform;
+    Object.defineProperty(process, 'platform', { value: 'win32', configurable: true });
+    try {
+      vi.resetModules();
+      // Re-mock tree module for the fresh import
+      vi.doMock('../src/core/tree.js', () => ({
+        findDescendants: vi.fn(async () => []),
+      }));
+      const { killProcess: win32KillProcess } = await import('../src/core/killer.js');
+
+      // Use fake timers to verify the wait duration
+      vi.useFakeTimers();
+      const adapter = mockAdapter({
+        // Process stays alive so soft mode runs through the full wait
+        isAlive: vi.fn(async () => true),
+      });
+      const proc = { pid: 1, port: 80, state: 'LISTEN' };
+      const promise = win32KillProcess(adapter, proc, { soft: true });
+
+      // Advance past the 500ms win32 wait (with polling interval)
+      await vi.advanceTimersByTimeAsync(600);
+      const result = await promise;
+      expect(result.signal).toBe('SIGKILL (escalated)');
+
+      vi.useRealTimers();
+    } finally {
+      Object.defineProperty(process, 'platform', { value: originalPlatform, configurable: true });
+      vi.resetModules();
+    }
+  });
+});
 
 describe('killProcess', () => {
   it('kills with SIGKILL by default', async () => {

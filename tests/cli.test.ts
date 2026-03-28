@@ -133,8 +133,12 @@ describe('parseArgs', () => {
     expect(() => parseArgs(['node', 'slay', '1-65535'])).toThrow('Range too large');
   });
 
-  it('throws on invalid port in range', () => {
+  it('throws on invalid port in range (start)', () => {
     expect(() => parseArgs(['node', 'slay', '0-100'])).toThrow('Invalid port');
+  });
+
+  it('throws on invalid port in range (end too high)', () => {
+    expect(() => parseArgs(['node', 'slay', '100-99999'])).toThrow('Invalid port');
   });
 
   it('parses port range mixed with single ports', () => {
@@ -178,6 +182,20 @@ describe('parseArgs', () => {
     const opts = parseArgs(['node', 'slay', 'info', '8000-8005']);
     expect(opts.command).toBe('info');
     expect(opts.ports).toHaveLength(6);
+  });
+
+  it('throws on invalid port in info subcommand', () => {
+    expect(() => parseArgs(['node', 'slay', 'info', '99999'])).toThrow('Invalid port');
+  });
+
+  it('throws on invalid end port in range within info subcommand', () => {
+    expect(() => parseArgs(['node', 'slay', 'info', '100-99999'])).toThrow('Invalid port');
+  });
+
+  it('ignores non-numeric non-range args in info subcommand', () => {
+    const opts = parseArgs(['node', 'slay', 'info', '3000', 'abc']);
+    expect(opts.command).toBe('info');
+    expect(opts.ports).toEqual([3000]);
   });
 });
 

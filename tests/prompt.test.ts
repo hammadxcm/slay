@@ -10,7 +10,7 @@ vi.mock('../src/ui/colors.js', async () => {
   };
 });
 
-import { confirm } from '../src/ui/prompt.js';
+import { confirm, textInput } from '../src/ui/prompt.js';
 import { createMockStdin } from './helpers.js';
 
 describe('confirm', () => {
@@ -122,5 +122,48 @@ describe('confirm', () => {
     expect(mockStdin.setRawMode).toHaveBeenCalledWith(false);
     Object.defineProperty(process, 'stdin', { value: originalStdin, configurable: true });
     writeSpy.mockRestore();
+  });
+});
+
+describe('textInput', () => {
+  afterEach(() => {
+    mockIsTTY = false;
+  });
+
+  it('returns empty string when not TTY', async () => {
+    mockIsTTY = false;
+    const result = await textInput('Enter name: ');
+    expect(result).toBe('');
+  });
+
+  it('returns user input when TTY', async () => {
+    mockIsTTY = true;
+
+    const originalStdin = process.stdin;
+    const originalStdout = process.stdout;
+
+    try {
+      const { Readable, Writable } = await import('node:stream');
+      const mockInput = new Readable({
+        read() {
+          this.push('hello-world\n');
+          this.push(null);
+        },
+      });
+      const mockOutput = new Writable({
+        write(_chunk, _encoding, callback) {
+          callback();
+        },
+      });
+
+      Object.defineProperty(process, 'stdin', { value: mockInput, configurable: true });
+      Object.defineProperty(process, 'stdout', { value: mockOutput, configurable: true });
+
+      const result = await textInput('Enter: ');
+      expect(result).toBe('hello-world');
+    } finally {
+      Object.defineProperty(process, 'stdin', { value: originalStdin, configurable: true });
+      Object.defineProperty(process, 'stdout', { value: originalStdout, configurable: true });
+    }
   });
 });

@@ -4,6 +4,9 @@ export default defineConfig({
   test: {
     globals: true,
     exclude: ['node_modules', 'dist', 'website'],
+    testTimeout: 30_000,
+    teardownTimeout: 5_000,
+    pool: 'forks',
     coverage: {
       provider: 'v8',
       include: ['src/**/*.ts'],

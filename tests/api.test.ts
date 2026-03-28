@@ -5,10 +5,16 @@ import {
   findAllListening,
   findByPort,
   findByPorts,
+  findConfig,
+  getProcessDetail,
   isSystemPort,
   killAll,
   killProcess,
+  loadConfig,
+  mergeProfileOpts,
   platform,
+  resolveProfile,
+  saveConfig,
   setPlatform,
 } from '../src/api.js';
 
@@ -36,5 +42,17 @@ describe('API exports', () => {
 
   it('exports SlayError', () => {
     expect(typeof SlayError).toBe('function');
+  });
+
+  it('exports config functions', () => {
+    expect(typeof findConfig).toBe('function');
+    expect(typeof loadConfig).toBe('function');
+    expect(typeof saveConfig).toBe('function');
+    expect(typeof resolveProfile).toBe('function');
+    expect(typeof mergeProfileOpts).toBe('function');
+  });
+
+  it('exports getProcessDetail', () => {
+    expect(typeof getProcessDetail).toBe('function');
   });
 });

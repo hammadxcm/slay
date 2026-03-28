@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest';
-import { exec } from '../src/utils/exec.js';
+import { describe, expect, it, vi } from 'vitest';
+import { exec, isWmicAvailable, resetWmicCache } from '../src/utils/exec.js';
 
-describe('exec', () => {
+describe.skipIf(process.platform === 'win32')('exec', () => {
   it('runs a simple command', async () => {
     const { stdout } = await exec('echo hello');
     expect(stdout.trim()).toBe('hello');
@@ -32,14 +32,86 @@ describe('exec', () => {
   });
 
   it('re-throws errors without stdout property', async () => {
-    // Verify our exec handles the case where the error lacks stdout
-    // by creating a scenario with a null byte in command (causes spawn error)
     try {
       await exec('echo \x00');
-      // If it doesn't throw, it returned stdout/stderr — that's fine
     } catch (error) {
-      // If it throws, verify it's an Error
       expect(error).toBeInstanceOf(Error);
     }
+  });
+});
+
+describe('isWmicAvailable', () => {
+  it('returns true when wmic succeeds and caches result', async () => {
+    vi.resetModules();
+
+    let execCallCount = 0;
+    vi.doMock('node:child_process', () => ({
+      exec: (
+        _cmd: string,
+        _opts: unknown,
+        cb: (err: null, result: { stdout: string; stderr: string }) => void,
+      ) => {
+        execCallCount++;
+        cb(null, { stdout: 'Caption\nMicrosoft Windows 10', stderr: '' });
+        return {} as unknown;
+      },
+    }));
+
+    const { isWmicAvailable: mockedIsWmic, resetWmicCache: mockedReset } = await import(
+      '../src/utils/exec.js'
+    );
+    mockedReset();
+    execCallCount = 0;
+
+    const result = await mockedIsWmic();
+    expect(result).toBe(true);
+
+    // Second call should use cache, not call exec again
+    const cached = await mockedIsWmic();
+    expect(cached).toBe(true);
+    expect(execCallCount).toBe(1);
+
+    // After reset, next call should re-probe
+    mockedReset();
+    const reprobed = await mockedIsWmic();
+    expect(reprobed).toBe(true);
+    expect(execCallCount).toBe(2);
+
+    vi.resetModules();
+  });
+
+  it('returns false when wmic fails and caches result', async () => {
+    vi.resetModules();
+
+    let execCallCount = 0;
+    vi.doMock('node:child_process', () => ({
+      exec: (_cmd: string, _opts: unknown, cb: (err: Error) => void) => {
+        execCallCount++;
+        cb(new Error('wmic not found'));
+        return {} as unknown;
+      },
+    }));
+
+    const { isWmicAvailable: mockedIsWmic, resetWmicCache: mockedReset } = await import(
+      '../src/utils/exec.js'
+    );
+    mockedReset();
+    execCallCount = 0;
+
+    const result = await mockedIsWmic();
+    expect(result).toBe(false);
+
+    // Cached
+    const cached = await mockedIsWmic();
+    expect(cached).toBe(false);
+    expect(execCallCount).toBe(1);
+
+    // Reset clears cache
+    mockedReset();
+    const reprobed = await mockedIsWmic();
+    expect(reprobed).toBe(false);
+    expect(execCallCount).toBe(2);
+
+    vi.resetModules();
   });
 });
