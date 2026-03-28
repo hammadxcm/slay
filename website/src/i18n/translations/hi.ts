@@ -56,6 +56,16 @@ export default {
   'features.ranges.desc': 'slay 8000-8010 से पोर्ट रेंज बंद करें।',
   'features.portinfo.title': 'पोर्ट जानकारी',
   'features.portinfo.desc': 'बिना बंद किए पोर्ट की जांच करें। PID, CPU, मेमोरी देखें।',
+  'features.completions.title': 'शेल कम्प्लीशन',
+  'features.completions.desc': 'bash, zsh और fish में कमांड, फ्लैग और प्रोफाइल नाम ऑटो-कम्प्लीट करें।',
+  'features.name.title': 'नाम से किल',
+  'features.name.desc':
+    'रेगेक्स सपोर्ट के साथ प्रक्रिया नाम से टारगेट करें। बल्क किल से विशिष्ट प्रक्रियाओं को बाहर रखें।',
+  'features.hook.title': 'किल के बाद हुक',
+  'features.hook.desc':
+    'किल के बाद स्वचालित रूप से कमांड चलाएं — सर्वर रीस्टार्ट, बिल्ड ट्रिगर या टीम को सूचित करें।',
+  'features.check.title': 'पोर्ट उपलब्धता',
+  'features.check.desc': 'जांचें कि पोर्ट खाली है या नहीं, अगला उपलब्ध पोर्ट खोजें। CI स्क्रिप्ट के लिए उपयुक्त।',
   'demos.tab.profiles': 'प्रोफ़ाइल',
   'stats.downloads': 'npm डाउनलोड',
   'stats.stars': 'GitHub स्टार',

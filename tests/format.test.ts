@@ -74,6 +74,13 @@ describe('formatProcessList', () => {
     expect(result).toContain('3000');
     expect(result).not.toContain('[TCP]');
   });
+
+  it('shows N/A for port 0', () => {
+    const procs: ProcessInfo[] = [{ pid: 100, port: 0, state: 'RUNNING', command: 'node' }];
+    const result = formatProcessList(procs);
+    expect(result).toContain('N/A');
+    expect(result).not.toContain(' 0 ');
+  });
 });
 
 describe('formatResult', () => {
@@ -133,6 +140,14 @@ describe('formatResult', () => {
     const result: KillResult = { pid: 100, port: 3000, success: true, signal: 'SIGKILL' };
     const output = formatResult(result, true);
     expect(output).toContain('0ms');
+  });
+
+  it('omits port display when port is 0', () => {
+    const result: KillResult = { pid: 100, port: 0, success: true, signal: 'SIGKILL' };
+    const output = formatResult(result);
+    expect(output).toContain('killed');
+    expect(output).toContain('100');
+    expect(output).not.toContain('on port');
   });
 });
 

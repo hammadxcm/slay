@@ -287,4 +287,43 @@ describe('mergeProfileOpts', () => {
     const merged = mergeProfileOpts(opts, profile);
     expect(merged.protocol).toBe('udp');
   });
+
+  it('applies profile name when CLI has none', () => {
+    const profile: ProfileOptions = { name: 'node' };
+    const merged = mergeProfileOpts(baseOpts, profile);
+    expect(merged.name).toBe('node');
+  });
+
+  it('CLI name overrides profile name', () => {
+    const opts = { ...baseOpts, name: 'nginx' };
+    const profile: ProfileOptions = { name: 'node' };
+    const merged = mergeProfileOpts(opts, profile);
+    expect(merged.name).toBe('nginx');
+  });
+
+  it('applies profile exclude when CLI has none', () => {
+    const profile: ProfileOptions = { exclude: ['nginx'] };
+    const merged = mergeProfileOpts(baseOpts, profile);
+    expect(merged.exclude).toEqual(['nginx']);
+  });
+
+  it('CLI exclude overrides profile exclude', () => {
+    const opts = { ...baseOpts, exclude: ['node'] };
+    const profile: ProfileOptions = { exclude: ['nginx'] };
+    const merged = mergeProfileOpts(opts, profile);
+    expect(merged.exclude).toEqual(['node']);
+  });
+
+  it('applies profile thenRun when CLI has none', () => {
+    const profile: ProfileOptions = { thenRun: 'npm start' };
+    const merged = mergeProfileOpts(baseOpts, profile);
+    expect(merged.thenRun).toBe('npm start');
+  });
+
+  it('CLI thenRun overrides profile thenRun', () => {
+    const opts = { ...baseOpts, thenRun: 'yarn dev' };
+    const profile: ProfileOptions = { thenRun: 'npm start' };
+    const merged = mergeProfileOpts(opts, profile);
+    expect(merged.thenRun).toBe('yarn dev');
+  });
 });

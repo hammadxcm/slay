@@ -204,6 +204,46 @@ describe('windows.isAlive', () => {
   });
 });
 
+describe('windows.findByName', () => {
+  it('parses tasklist output and matches pattern', async () => {
+    const TASKLIST_OUTPUT =
+      '"node.exe","1234","Console","1","12,345 K"\n"nginx.exe","5678","Console","1","8,000 K"';
+    mockedExec.mockResolvedValue({ stdout: TASKLIST_OUTPUT, stderr: '' });
+    const result = await windows.findByName('node');
+    expect(result).toHaveLength(1);
+    expect(result[0].pid).toBe(1234);
+    expect(result[0].command).toBe('node.exe');
+    expect(result[0].port).toBe(0);
+    expect(result[0].state).toBe('RUNNING');
+  });
+
+  it('returns empty on exec error', async () => {
+    mockedExec.mockRejectedValue(new Error('fail'));
+    const result = await windows.findByName('node');
+    expect(result).toEqual([]);
+  });
+
+  it('returns empty when no match', async () => {
+    const TASKLIST_OUTPUT = '"nginx.exe","5678","Console","1","8,000 K"';
+    mockedExec.mockResolvedValue({ stdout: TASKLIST_OUTPUT, stderr: '' });
+    const result = await windows.findByName('node');
+    expect(result).toEqual([]);
+  });
+
+  it('skips lines that do not match CSV format', async () => {
+    mockedExec.mockResolvedValue({ stdout: 'bad line format', stderr: '' });
+    const result = await windows.findByName('node');
+    expect(result).toEqual([]);
+  });
+
+  it('skips PID 0', async () => {
+    const TASKLIST_OUTPUT = '"System Idle Process","0","Services","0","8 K"';
+    mockedExec.mockResolvedValue({ stdout: TASKLIST_OUTPUT, stderr: '' });
+    const result = await windows.findByName('System');
+    expect(result).toEqual([]);
+  });
+});
+
 describe('createWindowsAdapter (UDP)', () => {
   it('uses netstat -p UDP for findByPort', async () => {
     const NETSTAT_UDP = '  UDP    0.0.0.0:5353    *:*                            1234';

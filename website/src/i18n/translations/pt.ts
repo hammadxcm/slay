@@ -61,6 +61,18 @@ export default {
   'features.ranges.desc': 'Mate uma faixa de portas com slay 8000-8010.',
   'features.portinfo.title': 'Info de portas',
   'features.portinfo.desc': 'Inspecione portas sem matar. Veja PID, CPU, memória.',
+  'features.completions.title': 'Autocompletar Shell',
+  'features.completions.desc':
+    'Autocomplete comandos, flags e nomes de perfil no bash, zsh e fish.',
+  'features.name.title': 'Matar por Nome',
+  'features.name.desc':
+    'Alveje processos por nome com suporte a regex. Exclua processos específicos de operações em massa.',
+  'features.hook.title': 'Hooks Pós-Kill',
+  'features.hook.desc':
+    'Execute comandos automaticamente após matar — reinicie servidores, acione builds ou notifique sua equipe.',
+  'features.check.title': 'Disponibilidade de Porta',
+  'features.check.desc':
+    'Verifique se as portas estão livres, encontre a próxima porta disponível. Perfeito para scripts CI e automação.',
   'demos.tab.profiles': 'Perfis',
   'stats.downloads': 'Downloads npm',
   'stats.stars': 'Estrelas GitHub',

@@ -55,6 +55,18 @@ export default {
   'features.ranges.desc': 'اقتل نطاقًا من المنافذ باستخدام slay 8000-8010.',
   'features.portinfo.title': 'معلومات المنفذ',
   'features.portinfo.desc': 'افحص المنافذ بدون إنهاء. شاهد PID والمعالج والذاكرة.',
+  'features.completions.title': 'إكمال تلقائي للشل',
+  'features.completions.desc':
+    'أكمل الأوامر والخيارات وأسماء الملفات الشخصية تلقائيًا في bash وzsh وfish.',
+  'features.name.title': 'إنهاء بالاسم',
+  'features.name.desc':
+    'استهدف العمليات بالاسم مع دعم التعبيرات النمطية. استثنِ عمليات محددة من الإنهاء الجماعي.',
+  'features.hook.title': 'خطافات ما بعد الإنهاء',
+  'features.hook.desc':
+    'شغّل أوامر تلقائيًا بعد الإنهاء — أعد تشغيل الخوادم أو ابدأ البناء أو أبلغ فريقك.',
+  'features.check.title': 'توفر المنفذ',
+  'features.check.desc':
+    'تحقق مما إذا كانت المنافذ متاحة، واعثر على المنفذ التالي المتوفر. مثالي لسكربتات CI.',
   'demos.tab.profiles': 'الملفات',
   'stats.downloads': 'تنزيلات npm',
   'stats.stars': 'نجوم GitHub',

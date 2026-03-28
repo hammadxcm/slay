@@ -104,6 +104,38 @@ const demos = {
         { type: 'success', text: 'killed tree: 12849, 12848, 12847' },
       ],
     },
+    {
+      title: 'Kill by Name',
+      termTitle: 'slay --name "node.*"',
+      lines: [
+        { type: 'prompt', text: '$ slay --name "node.*" --exclude "vite"' },
+        { type: 'output', text: 'PID 12847  node server.js     (port 3000)' },
+        { type: 'output', text: 'PID 13201  node worker.js     (port 3001)' },
+        { type: 'warning', text: 'PID 14500  node vite.js       (excluded)' },
+        { type: 'success', text: 'killed 2 processes, 1 excluded' },
+      ],
+    },
+    {
+      title: 'Post-Kill Hook',
+      termTitle: 'slay 3000 --then "npm start"',
+      lines: [
+        { type: 'prompt', text: '$ slay 3000 --then "npm start"' },
+        { type: 'output', text: '3000 > node PID 12847 (Dev Server)' },
+        { type: 'success', text: 'killed PID 12847 on port 3000 [SIGKILL]' },
+        { type: 'warning', text: 'running hook: npm start' },
+        { type: 'success', text: 'hook completed (exit 0)' },
+      ],
+    },
+    {
+      title: 'Port Check',
+      termTitle: 'slay check 3000',
+      lines: [
+        { type: 'prompt', text: '$ slay check 3000' },
+        { type: 'error', text: 'port 3000 is in use (node PID 12847)' },
+        { type: 'prompt', text: '$ slay check --next 3000' },
+        { type: 'success', text: 'port 3002 is available' },
+      ],
+    },
   ],
   profiles: [
     {

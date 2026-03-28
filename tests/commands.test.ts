@@ -119,6 +119,32 @@ describe('profile list', () => {
     spy.mockRestore();
   });
 
+  it('lists profiles with name, exclude, and then options', async () => {
+    writeFileSync(
+      join(tempDir, '.slay.json'),
+      JSON.stringify({
+        profiles: {
+          hook: {
+            ports: [3000],
+            name: 'node',
+            exclude: ['nginx', 'redis'],
+            thenRun: 'npm start',
+          },
+        },
+      }),
+    );
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const { runProfile } = await import('../src/commands/profile.js');
+    await runProfile(['list']);
+    const output = spy.mock.calls.map((c) => c[0]).join('\n');
+    expect(output).toContain('hook');
+    expect(output).toContain('--name "node"');
+    expect(output).toContain('--exclude "nginx"');
+    expect(output).toContain('--exclude "redis"');
+    expect(output).toContain('--then "npm start"');
+    spy.mockRestore();
+  });
+
   it('lists profile with no ports and only some flags', async () => {
     writeFileSync(
       join(tempDir, '.slay.json'),

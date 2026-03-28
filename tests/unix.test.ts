@@ -160,6 +160,37 @@ describe('unix.isAlive', () => {
   });
 });
 
+describe('unix.findByName', () => {
+  it('parses ps output and matches pattern', async () => {
+    const PS_OUTPUT = 'PID   COMM\n  1234 node\n  5678 nginx\n  9012 node-worker';
+    mockedExec.mockResolvedValue({ stdout: PS_OUTPUT, stderr: '' });
+    const result = await unix.findByName('node');
+    expect(result.length).toBeGreaterThanOrEqual(2);
+    expect(result.every((p) => p.port === 0)).toBe(true);
+    expect(result.every((p) => p.state === 'RUNNING')).toBe(true);
+  });
+
+  it('returns empty on exec error', async () => {
+    mockedExec.mockRejectedValue(new Error('fail'));
+    const result = await unix.findByName('node');
+    expect(result).toEqual([]);
+  });
+
+  it('returns empty when no match', async () => {
+    const PS_OUTPUT = 'PID   COMM\n  1234 nginx';
+    mockedExec.mockResolvedValue({ stdout: PS_OUTPUT, stderr: '' });
+    const result = await unix.findByName('node');
+    expect(result).toEqual([]);
+  });
+
+  it('skips lines with PID 0 or NaN', async () => {
+    const PS_OUTPUT = 'PID   COMM\n  0 kernel\n  NaN bad';
+    mockedExec.mockResolvedValue({ stdout: PS_OUTPUT, stderr: '' });
+    const result = await unix.findByName('kernel');
+    expect(result).toEqual([]);
+  });
+});
+
 describe('createUnixAdapter (UDP)', () => {
   it('uses lsof -iUDP for findByPort', async () => {
     const udp = createUnixAdapter('udp');

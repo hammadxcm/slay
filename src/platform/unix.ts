@@ -1,3 +1,4 @@
+import { matchesPattern } from '../core/filter.js';
 import type { PlatformAdapter, ProcessInfo, Protocol } from '../types.js';
 import { KillErrorCode, SlayError, isPermissionError } from '../utils/errors.js';
 import { exec } from '../utils/exec.js';
@@ -53,6 +54,26 @@ export function createUnixAdapter(protocol: Protocol = 'tcp'): PlatformAdapter {
         const { stdout } = await exec(cmd);
         const lines = stdout.trim().split('\n').slice(1);
         return deduplicateByPid(lines, parseLsofLine, protocol);
+      } catch {
+        return [];
+      }
+    },
+
+    async findByName(pattern: string): Promise<ProcessInfo[]> {
+      try {
+        const { stdout } = await exec('ps axo pid,comm');
+        return stdout
+          .trim()
+          .split(/\r?\n/)
+          .slice(1) // skip header
+          .map((line) => {
+            const parts = line.trim().split(/\s+/);
+            const pid = Number.parseInt(parts[0], 10);
+            const command = parts.slice(1).join(' ');
+            return { pid, command };
+          })
+          .filter((p) => !Number.isNaN(p.pid) && p.pid > 0 && matchesPattern(p.command, pattern))
+          .map((p) => ({ pid: p.pid, port: 0, state: 'RUNNING', command: p.command }));
       } catch {
         return [];
       }

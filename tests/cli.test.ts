@@ -197,6 +197,105 @@ describe('parseArgs', () => {
     expect(opts.command).toBe('info');
     expect(opts.ports).toEqual([3000]);
   });
+
+  it('detects completions subcommand', () => {
+    const opts = parseArgs(['node', 'slay', 'completions', 'bash']);
+    expect(opts.command).toBe('completions');
+    expect(opts.subArgs).toEqual(['bash']);
+  });
+
+  it('detects --list-profile-names', () => {
+    const opts = parseArgs(['node', 'slay', '--list-profile-names']);
+    expect(opts.command).toBe('_list-profile-names');
+  });
+
+  it('detects check subcommand with ports', () => {
+    const opts = parseArgs(['node', 'slay', 'check', '3000', '8080']);
+    expect(opts.command).toBe('check');
+    expect(opts.ports).toEqual([3000, 8080]);
+  });
+
+  it('detects check subcommand with --json', () => {
+    const opts = parseArgs(['node', 'slay', 'check', '3000', '--json']);
+    expect(opts.command).toBe('check');
+    expect(opts.json).toBe(true);
+  });
+
+  it('detects check subcommand with --verbose', () => {
+    const opts = parseArgs(['node', 'slay', 'check', '3000', '-v']);
+    expect(opts.command).toBe('check');
+    expect(opts.verbose).toBe(true);
+  });
+
+  it('detects check subcommand with --next', () => {
+    const opts = parseArgs(['node', 'slay', 'check', '--next', '3000']);
+    expect(opts.command).toBe('check');
+    expect(opts.subArgs).toContain('next:3000');
+  });
+
+  it('detects check subcommand with --next-available', () => {
+    const opts = parseArgs(['node', 'slay', 'check', '--next-available', '3000-4000']);
+    expect(opts.command).toBe('check');
+    expect(opts.subArgs).toContain('next:3000-4000');
+  });
+
+  it('throws when check --next has no value', () => {
+    expect(() => parseArgs(['node', 'slay', 'check', '--next'])).toThrow(
+      '--next requires a port or range',
+    );
+  });
+
+  it('throws on invalid port in check subcommand', () => {
+    expect(() => parseArgs(['node', 'slay', 'check', '99999'])).toThrow('Invalid port');
+  });
+
+  it('detects check subcommand with port range', () => {
+    const opts = parseArgs(['node', 'slay', 'check', '3000-3005']);
+    expect(opts.command).toBe('check');
+    expect(opts.ports).toHaveLength(6);
+  });
+
+  it('check subcommand ignores unrecognized args', () => {
+    const opts = parseArgs(['node', 'slay', 'check', '3000', 'abc']);
+    expect(opts.command).toBe('check');
+    expect(opts.ports).toEqual([3000]);
+  });
+
+  it('parses --name flag', () => {
+    const opts = parseArgs(['node', 'slay', '--name', 'node']);
+    expect(opts.name).toBe('node');
+  });
+
+  it('throws when --name has no value', () => {
+    expect(() => parseArgs(['node', 'slay', '--name'])).toThrow('--name requires a pattern');
+  });
+
+  it('parses --exclude flag', () => {
+    const opts = parseArgs(['node', 'slay', '3000', '--exclude', 'nginx']);
+    expect(opts.exclude).toEqual(['nginx']);
+  });
+
+  it('parses multiple --exclude flags', () => {
+    const opts = parseArgs(['node', 'slay', '3000', '--exclude', 'nginx', '--exclude', 'node']);
+    expect(opts.exclude).toEqual(['nginx', 'node']);
+  });
+
+  it('throws when --exclude has no value', () => {
+    expect(() => parseArgs(['node', 'slay', '3000', '--exclude'])).toThrow(
+      '--exclude requires a pattern',
+    );
+  });
+
+  it('parses --then flag', () => {
+    const opts = parseArgs(['node', 'slay', '3000', '--then', 'npm start']);
+    expect(opts.thenRun).toBe('npm start');
+  });
+
+  it('throws when --then has no value', () => {
+    expect(() => parseArgs(['node', 'slay', '3000', '--then'])).toThrow(
+      '--then requires a command',
+    );
+  });
 });
 
 describe('validateOptions', () => {
@@ -232,6 +331,11 @@ describe('validateOptions', () => {
 
   it('passes with subcommand', () => {
     const opts = parseArgs(['node', 'slay', 'init']);
+    expect(() => validateOptions(opts)).not.toThrow();
+  });
+
+  it('passes with --name (no ports needed)', () => {
+    const opts = parseArgs(['node', 'slay', '--name', 'node']);
     expect(() => validateOptions(opts)).not.toThrow();
   });
 });

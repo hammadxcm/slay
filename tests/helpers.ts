@@ -8,6 +8,7 @@ export function mockAdapter(overrides: Partial<PlatformAdapter> = {}): PlatformA
   return {
     findByPort: vi.fn(async () => []),
     findAllListening: vi.fn(async () => []),
+    findByName: vi.fn(async () => []),
     kill: vi.fn(async () => true),
     isAlive: vi.fn(async () => true),
     ...overrides,
@@ -18,6 +19,7 @@ export function mockAdapterWithProcesses(processes: ProcessInfo[]): PlatformAdap
   return {
     findByPort: vi.fn(async (port: number) => processes.filter((p) => p.port === port)),
     findAllListening: vi.fn(async () => processes),
+    findByName: vi.fn(async () => []),
     kill: vi.fn(async () => true),
     isAlive: vi.fn(async () => true),
   };

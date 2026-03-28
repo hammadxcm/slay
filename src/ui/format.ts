@@ -7,7 +7,8 @@ export function formatProcessList(processes: ProcessInfo[], verbose = false): st
   const lines = processes.map((p) => {
     const label = p.label ? c.dim(` (${p.label})`) : '';
     const cmd = p.command ? c.cyan(p.command) : c.dim('unknown');
-    const base = `  ${c.bold(String(p.port))} ${c.dim('>')} ${cmd} ${c.dim(`PID ${p.pid}`)}${label}`;
+    const portStr = p.port > 0 ? c.bold(String(p.port)) : c.dim('N/A');
+    const base = `  ${portStr} ${c.dim('>')} ${cmd} ${c.dim(`PID ${p.pid}`)}${label}`;
     if (!verbose) return base;
     const protocol = p.protocol ? c.dim(` [${p.protocol.toUpperCase()}]`) : '';
     return `${base}${protocol}`;
@@ -18,7 +19,8 @@ export function formatProcessList(processes: ProcessInfo[], verbose = false): st
 
 export function formatResult(result: KillResult, verbose = false): string {
   if (result.success) {
-    const base = `  ${c.green('killed')} PID ${c.bold(String(result.pid))} on port ${c.bold(String(result.port))} ${c.dim(`[${result.signal}]`)}`;
+    const portStr = result.port > 0 ? `on port ${c.bold(String(result.port))} ` : '';
+    const base = `  ${c.green('killed')} PID ${c.bold(String(result.pid))} ${portStr}${c.dim(`[${result.signal}]`)}`;
     if (!verbose) return base;
     return `${base} ${c.dim(`(elapsed ${result.elapsed ?? 0}ms)`)}`;
   }
