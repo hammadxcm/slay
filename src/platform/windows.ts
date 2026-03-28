@@ -1,3 +1,4 @@
+import { matchesPattern } from '../core/filter.js';
 import type { PlatformAdapter, ProcessInfo, Protocol } from '../types.js';
 import { KillErrorCode, SlayError, isPermissionError } from '../utils/errors.js';
 import { exec } from '../utils/exec.js';
@@ -72,6 +73,27 @@ export function createWindowsAdapter(protocol: Protocol = 'tcp'): PlatformAdapte
           info.command = await getProcessName(info.pid);
         }
         return results;
+      } catch {
+        return [];
+      }
+    },
+
+    async findByName(pattern: string): Promise<ProcessInfo[]> {
+      try {
+        const { stdout } = await exec('tasklist /FO CSV /NH 2>nul');
+        return stdout
+          .trim()
+          .split(/\r?\n/)
+          .map((line) => {
+            const match = line.match(/"([^"]+)","(\d+)"/);
+            if (!match) return null;
+            return { command: match[1], pid: Number.parseInt(match[2], 10) };
+          })
+          .filter(
+            (p): p is { command: string; pid: number } =>
+              p !== null && !Number.isNaN(p.pid) && p.pid > 0 && matchesPattern(p.command, pattern),
+          )
+          .map((p) => ({ pid: p.pid, port: 0, state: 'RUNNING', command: p.command }));
       } catch {
         return [];
       }

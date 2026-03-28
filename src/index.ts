@@ -3,7 +3,8 @@ import { runInfo } from './commands/info.js';
 import { runInit } from './commands/init.js';
 import { runProfile } from './commands/profile.js';
 import { findConfig, loadConfig, mergeProfileOpts, resolveProfile } from './config.js';
-import { findAllListening, findByPorts } from './core/discovery.js';
+import { findAllListening, findByName, findByPorts } from './core/discovery.js';
+import { excludeProcesses } from './core/filter.js';
 import { killAll } from './core/killer.js';
 import { getSystemPortWarning } from './core/labels.js';
 import { platform } from './platform/index.js';
@@ -16,6 +17,7 @@ import {
   formatResult,
   formatSummary,
   jsonDryRun,
+  jsonEvent,
   jsonFound,
   jsonResult,
   jsonSummary,
@@ -38,6 +40,36 @@ async function run(): Promise<void> {
   }
   if (opts.command === 'info') {
     await runInfo(opts.ports);
+    return;
+  }
+  if (opts.command === 'completions') {
+    const { generateCompletion } = await import('./completions/index.js');
+    const shell = opts.subArgs[0];
+    if (!shell) {
+      console.error('Usage: slay completions <bash|zsh|fish>');
+      process.exit(1);
+    }
+    try {
+      console.log(generateCompletion(shell));
+    } catch (e) {
+      console.error((e as Error).message);
+      process.exit(1);
+    }
+    return;
+  }
+  if (opts.command === '_list-profile-names') {
+    const configPath = findConfig();
+    if (configPath) {
+      const config = loadConfig(configPath);
+      for (const name of Object.keys(config.profiles)) {
+        console.log(name);
+      }
+    }
+    return;
+  }
+  if (opts.command === 'check') {
+    const { runCheck } = await import('./commands/check.js');
+    await runCheck(opts);
     return;
   }
 
@@ -83,6 +115,20 @@ async function run(): Promise<void> {
     if (processes.length === 0) return;
   } else {
     processes = await findByPorts(adapter, opts.ports);
+  }
+
+  if (opts.name) {
+    const byName = await findByName(adapter, opts.name);
+    const existing = new Set(processes.map((p) => p.pid));
+    for (const p of byName) {
+      if (!existing.has(p.pid)) {
+        processes.push(p);
+        existing.add(p.pid);
+      }
+    }
+  }
+  if (opts.exclude) {
+    processes = excludeProcesses(processes, opts.exclude);
   }
 
   if (processes.length === 0) {
@@ -149,6 +195,23 @@ async function run(): Promise<void> {
     console.log();
   }
 
+  if (opts.thenRun && results.some((r) => r.success)) {
+    if (!isJson) console.log(`\n  ${c.dim('Running:')} ${opts.thenRun}`);
+    const { runHook } = await import('./core/hook.js');
+    const hookResult = await runHook(opts.thenRun, isJson);
+    if (isJson) {
+      console.log(
+        jsonEvent('hook', {
+          command: hookResult.command,
+          exitCode: hookResult.exitCode,
+          success: hookResult.success,
+        }),
+      );
+    } else if (!hookResult.success) {
+      console.log(`  ${c.red('hook failed')} (exit ${hookResult.exitCode})`);
+    }
+  }
+
   const anyFailed = results.some((r) => !r.success);
   if (anyFailed) process.exit(1);
 }
@@ -188,6 +251,23 @@ async function watchMode(
     for (const r of results) {
       if (isJson) console.log(jsonResult(r));
       else console.log(formatResult(r, opts.verbose));
+    }
+
+    if (opts.thenRun && results.some((r) => r.success)) {
+      if (!isJson) console.log(`\n  ${c.dim('Running:')} ${opts.thenRun}`);
+      const { runHook } = await import('./core/hook.js');
+      const hookResult = await runHook(opts.thenRun, isJson);
+      if (isJson) {
+        console.log(
+          jsonEvent('hook', {
+            command: hookResult.command,
+            exitCode: hookResult.exitCode,
+            success: hookResult.success,
+          }),
+        );
+      } else if (!hookResult.success) {
+        console.log(`  ${c.red('hook failed')} (exit ${hookResult.exitCode})`);
+      }
     }
   };
 

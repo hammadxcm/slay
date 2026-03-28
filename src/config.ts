@@ -68,6 +68,10 @@ export function mergeProfileOpts(base: CliOptions, profile: ProfileOptions): Cli
   if (profile.dryRun && !merged.dryRun) merged.dryRun = true;
   if (profile.tree && !merged.tree) merged.tree = true;
   if (profile.protocol && merged.protocol === 'tcp') merged.protocol = profile.protocol;
+  if (profile.name && !merged.name) merged.name = profile.name;
+  if (profile.exclude && (!merged.exclude || merged.exclude.length === 0))
+    merged.exclude = [...profile.exclude];
+  if (profile.thenRun && !merged.thenRun) merged.thenRun = profile.thenRun;
 
   return merged;
 }

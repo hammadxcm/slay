@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { findAllListening, findByPort, findByPorts } from '../src/core/discovery.js';
-import { PROC_NGINX, PROC_NODE, mockAdapterWithProcesses } from './helpers.js';
+import { describe, expect, it, vi } from 'vitest';
+import { findAllListening, findByName, findByPort, findByPorts } from '../src/core/discovery.js';
+import { PROC_NGINX, PROC_NODE, mockAdapter, mockAdapterWithProcesses } from './helpers.js';
 
 describe('discovery', () => {
   const procs = [PROC_NODE, PROC_NGINX];
@@ -29,5 +29,15 @@ describe('discovery', () => {
     const adapter = mockAdapterWithProcesses(procs);
     const result = await findByPorts(adapter, [3000, 8080]);
     expect(result).toHaveLength(2);
+  });
+
+  it('findByName returns enriched results', async () => {
+    const adapter = mockAdapter({
+      findByName: vi.fn(async () => [{ pid: 500, port: 0, state: 'RUNNING', command: 'node' }]),
+    });
+    const result = await findByName(adapter, 'node');
+    expect(result).toHaveLength(1);
+    expect(result[0].pid).toBe(500);
+    expect(result[0].label).toBeDefined();
   });
 });

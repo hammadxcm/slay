@@ -13,6 +13,8 @@ const HELP = `
     slay init                 Create .slay.json config
     slay profile [list|add|rm] Manage profiles
     slay info <port>          Inspect port without killing
+    slay check <port>         Check if port is free or occupied
+    slay completions <shell>  Output shell completions (bash, zsh, fish)
 
   Options:
     -f, --force               SIGKILL immediately, skip prompt
@@ -26,6 +28,10 @@ const HELP = `
     -w, --watch               Keep polling & killing (Ctrl+C to stop)
     -i, --interactive         TUI process selector
     --profile <name>          Run a saved profile
+    --name <pattern>          Kill processes matching name/regex
+    --exclude <pattern>       Exclude processes matching pattern (repeatable)
+    --then <command>          Run a command after successful kill
+    --next <port>             Find next available port (use with check)
     -h, --help                Show this help
 
   Examples:
@@ -93,6 +99,39 @@ export function parseArgs(argv: string[]): CliOptions {
       }
       return opts;
     }
+    if (first === 'completions') {
+      opts.command = 'completions';
+      opts.subArgs = args.slice(1);
+      return opts;
+    }
+    if (first === '--list-profile-names') {
+      opts.command = '_list-profile-names';
+      return opts;
+    }
+    if (first === 'check') {
+      opts.command = 'check';
+      for (let i = 1; i < args.length; i++) {
+        const arg = args[i];
+        if (arg === '--json') {
+          opts.json = true;
+        } else if (arg === '-v' || arg === '--verbose') {
+          opts.verbose = true;
+        } else if (arg === '--next' || arg === '--next-available') {
+          i++;
+          if (i >= args.length) throw new Error('--next requires a port or range');
+          opts.subArgs.push(`next:${args[i]}`);
+        } else if (/^\d+$/.test(arg)) {
+          const port = Number.parseInt(arg, 10);
+          if (port < 1 || port > 65535) {
+            throw new SlayError(KillErrorCode.INVALID_PORT, arg);
+          }
+          opts.ports.push(port);
+        } else if (/^\d+-\d+$/.test(arg)) {
+          expandRange(arg, opts);
+        }
+      }
+      return opts;
+    }
   }
 
   // Index-based iteration for --profile <name>
@@ -129,6 +168,25 @@ export function parseArgs(argv: string[]): CliOptions {
         throw new Error('--profile requires a name');
       }
       opts.profile = args[i];
+    } else if (arg === '--name') {
+      i++;
+      if (i >= args.length) {
+        throw new Error('--name requires a pattern');
+      }
+      opts.name = args[i];
+    } else if (arg === '--exclude') {
+      i++;
+      if (i >= args.length) {
+        throw new Error('--exclude requires a pattern');
+      }
+      if (!opts.exclude) opts.exclude = [];
+      opts.exclude.push(args[i]);
+    } else if (arg === '--then') {
+      i++;
+      if (i >= args.length) {
+        throw new Error('--then requires a command');
+      }
+      opts.thenRun = args[i];
     } else if (/^\d+-\d+$/.test(arg)) {
       expandRange(arg, opts);
     } else if (/^\d+$/.test(arg)) {
@@ -175,7 +233,7 @@ export function showHelp(): void {
 export function validateOptions(opts: CliOptions): void {
   if (opts.command) return; // Subcommands handle their own validation
   if (opts.profile) return; // Profile will supply ports
-  if (!opts.help && !opts.all && !opts.interactive && opts.ports.length === 0) {
+  if (!opts.help && !opts.all && !opts.interactive && !opts.name && opts.ports.length === 0) {
     throw new Error('No ports specified. Use slay <port>, slay --all, or slay -i');
   }
 }

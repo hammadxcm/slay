@@ -12,6 +12,7 @@ export interface ProcessInfo {
 export interface PlatformAdapter {
   findByPort(port: number): Promise<ProcessInfo[]>;
   findAllListening(): Promise<ProcessInfo[]>;
+  findByName(pattern: string): Promise<ProcessInfo[]>;
   kill(pid: number, signal: 'SIGTERM' | 'SIGKILL'): Promise<boolean>;
   isAlive(pid: number): Promise<boolean>;
 }
@@ -39,7 +40,10 @@ export interface CliOptions {
   tree: boolean;
   protocol: Protocol;
   help: boolean;
-  command?: 'init' | 'profile' | 'info';
+  command?: 'init' | 'profile' | 'info' | 'check' | 'completions' | '_list-profile-names';
+  name?: string;
+  exclude?: string[];
+  thenRun?: string;
   subArgs: string[];
   profile?: string;
 }
@@ -62,6 +66,9 @@ export interface ProfileOptions {
   dryRun?: boolean;
   tree?: boolean;
   protocol?: Protocol;
+  name?: string;
+  exclude?: string[];
+  thenRun?: string;
 }
 
 export interface SlayConfig {

@@ -93,6 +93,34 @@ const features = [
     description: t('features.portinfo.desc'),
     color: 'var(--green)',
   },
+  {
+    id: 'completions',
+    cmd: 'slay completions zsh',
+    title: t('features.completions.title'),
+    description: t('features.completions.desc'),
+    color: 'var(--cyan)',
+  },
+  {
+    id: 'name',
+    cmd: 'slay --name "node.*"',
+    title: t('features.name.title'),
+    description: t('features.name.desc'),
+    color: 'var(--red)',
+  },
+  {
+    id: 'hook',
+    cmd: 'slay 3000 --then "npm start"',
+    title: t('features.hook.title'),
+    description: t('features.hook.desc'),
+    color: 'var(--yellow)',
+  },
+  {
+    id: 'check',
+    cmd: 'slay check 3000',
+    title: t('features.check.title'),
+    description: t('features.check.desc'),
+    color: 'var(--green)',
+  },
 ];
 
 const icons: Record<string, string> = {
@@ -108,6 +136,10 @@ const icons: Record<string, string> = {
   profiles: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor"/><circle cx="14" cy="12" r="2" fill="currentColor"/><circle cx="10" cy="18" r="2" fill="currentColor"/></svg>`,
   ranges: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="2 9 5 12 2 15"/><polyline points="22 9 19 12 22 15"/></svg>`,
   portinfo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><line x1="15" y1="15" x2="21" y2="21"/></svg>`,
+  completions: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`,
+  name: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>`,
+  hook: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
+  check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
 };
 ---
 
@@ -315,6 +347,22 @@ const icons: Record<string, string> = {
 
   .feature-card:hover .feature-icon--portinfo :global(svg) {
     animation: icon-pulse 0.8s ease-in-out infinite;
+  }
+
+  .feature-card:hover .feature-icon--completions :global(svg) {
+    animation: icon-blink 0.8s step-end infinite;
+  }
+
+  .feature-card:hover .feature-icon--name :global(svg) {
+    animation: icon-swing 0.8s ease-in-out infinite;
+  }
+
+  .feature-card:hover .feature-icon--hook :global(svg) {
+    animation: icon-rotate 1.5s linear infinite;
+  }
+
+  .feature-card:hover .feature-icon--check :global(svg) {
+    animation: icon-bounce 0.6s ease-in-out infinite;
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -59,6 +59,18 @@ export default {
   'features.ranges.desc': 'Mata un rango de puertos con slay 8000-8010.',
   'features.portinfo.title': 'Info de puertos',
   'features.portinfo.desc': 'Inspecciona puertos sin matar. Ve PID, CPU, memoria.',
+  'features.completions.title': 'Autocompletado Shell',
+  'features.completions.desc':
+    'Autocompleta comandos, flags y nombres de perfil en bash, zsh y fish.',
+  'features.name.title': 'Matar por Nombre',
+  'features.name.desc':
+    'Apunta a procesos por nombre con soporte de regex. Excluye procesos específicos de operaciones masivas.',
+  'features.hook.title': 'Hooks Post-Kill',
+  'features.hook.desc':
+    'Ejecuta comandos automáticamente después de matar — reinicia servidores, lanza builds o notifica a tu equipo.',
+  'features.check.title': 'Disponibilidad de Puerto',
+  'features.check.desc':
+    'Verifica si los puertos están libres, encuentra el siguiente puerto disponible. Perfecto para CI y automatización.',
   'demos.tab.profiles': 'Perfiles',
   'stats.downloads': 'Descargas npm',
   'stats.stars': 'Estrellas GitHub',

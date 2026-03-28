@@ -55,6 +55,11 @@ async function profileList(): Promise<void> {
     if (profile.dryRun) parts.push('--dry-run');
     if (profile.tree) parts.push('--tree');
     if (profile.protocol && profile.protocol !== 'tcp') parts.push(`--${profile.protocol}`);
+    if (profile.name) parts.push(`--name "${profile.name}"`);
+    if (profile.exclude && profile.exclude.length > 0) {
+      for (const ex of profile.exclude) parts.push(`--exclude "${ex}"`);
+    }
+    if (profile.thenRun) parts.push(`--then "${profile.thenRun}"`);
 
     console.log(`  ${c.green(name.padEnd(12))} ${c.dim(parts.join('  '))}`);
   }

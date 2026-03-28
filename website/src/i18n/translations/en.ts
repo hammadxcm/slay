@@ -56,6 +56,18 @@ export default {
   'features.ranges.desc': 'Kill a range of ports with slay 8000-8010.',
   'features.portinfo.title': 'Port Info',
   'features.portinfo.desc': 'Inspect ports without killing. See PID, CPU, memory, and uptime.',
+  'features.completions.title': 'Shell Completions',
+  'features.completions.desc':
+    'Tab-complete commands, flags, and profile names in bash, zsh, and fish.',
+  'features.name.title': 'Kill by Name',
+  'features.name.desc':
+    'Target processes by name with regex support. Exclude specific processes from bulk kills.',
+  'features.hook.title': 'Post-Kill Hooks',
+  'features.hook.desc':
+    'Automatically run commands after killing — restart servers, trigger builds, or notify your team.',
+  'features.check.title': 'Port Availability',
+  'features.check.desc':
+    'Check if ports are free, find the next available port. Perfect for CI scripts and automation.',
   'demos.tab.profiles': 'Profiles',
   'stats.downloads': 'npm Downloads',
   'stats.stars': 'GitHub Stars',

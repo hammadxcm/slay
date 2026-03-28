@@ -61,6 +61,17 @@ export default {
   'features.ranges.desc': 'Убивайте диапазон портов с помощью slay 8000-8010.',
   'features.portinfo.title': 'Информация о порте',
   'features.portinfo.desc': 'Проверяйте порты без завершения. Смотрите PID, CPU, память.',
+  'features.completions.title': 'Автодополнение',
+  'features.completions.desc': 'Автодополнение команд, флагов и имён профилей в bash, zsh и fish.',
+  'features.name.title': 'Убить по имени',
+  'features.name.desc':
+    'Находите процессы по имени с поддержкой регулярных выражений. Исключайте определённые процессы из массовых операций.',
+  'features.hook.title': 'Хуки после убийства',
+  'features.hook.desc':
+    'Автоматически выполняйте команды после завершения — перезапуск серверов, запуск сборки или уведомление команды.',
+  'features.check.title': 'Доступность порта',
+  'features.check.desc':
+    'Проверьте, свободны ли порты, найдите следующий доступный порт. Идеально для CI и автоматизации.',
   'demos.tab.profiles': 'Профили',
   'stats.downloads': 'Загрузки npm',
   'stats.stars': 'Звёзды GitHub',

@@ -62,6 +62,10 @@ Also available on **[JSR](https://jsr.io/@hammadxcm/slay)** for Deno and modern 
 - **JSON output** — pipe to `jq` for scripting
 - **Dry run** — preview what would be killed
 - **Smart labels** — auto-detects Node.js, Python, Docker, PostgreSQL, and more
+- **Shell completions** — tab-complete in bash, zsh, and fish
+- **Kill by name** — target processes by name with regex, exclude specific processes
+- **Post-kill hooks** — auto-run commands after killing (`--then "npm start"`)
+- **Port check** — check availability and find next free port for CI scripts
 - **Cross-platform** — macOS, Linux, Windows
 - **Zero runtime dependencies**
 
@@ -114,7 +118,7 @@ slay --profile dev
 }
 ```
 
-> **Supported profile fields:** `ports`, `force`, `yes`, `soft`, `verbose`, `all`, `watch`, `dryRun`, `tree`, `protocol`
+> **Supported profile fields:** `ports`, `force`, `yes`, `soft`, `verbose`, `all`, `watch`, `dryRun`, `tree`, `protocol`, `name`, `exclude`, `thenRun`
 
 > **Tip:** CLI flags override profile values. `slay --profile dev --force` uses the profile's ports but force-kills.
 
@@ -188,6 +192,47 @@ slay 3000 --json | jq '.pid'
 slay 53 --udp
 ```
 
+### Kill by process name
+
+```bash
+slay --name node              # Kill all processes named "node"
+slay --name "python.*"        # Regex pattern matching
+slay --all --exclude nginx    # Kill all except nginx
+slay 3000 --exclude postgres  # Kill port 3000 unless it's postgres
+```
+
+### Post-kill hook
+
+```bash
+slay 3000 --then "npm start"           # Auto-restart after kill
+slay 3000 -w --then "npm run dev"      # Watch mode + auto-restart
+```
+
+### Check port availability
+
+```bash
+slay check 3000                # Exit 0 if free, exit 1 if occupied
+slay check 3000 8080 5432      # Check multiple ports
+slay check 3000 --json         # JSON output for scripting
+slay check --next 3000         # Find next free port from 3000
+slay check --next 3000-4000    # Find next free port in range
+```
+
+> **Tip:** Use in scripts: `PORT=$(slay check --next 3000)` to get the first available port.
+
+### Shell completions
+
+```bash
+# Bash — add to ~/.bashrc
+eval "$(slay completions bash)"
+
+# Zsh — add to ~/.zshrc
+eval "$(slay completions zsh)"
+
+# Fish — add to ~/.config/fish/config.fish
+slay completions fish | source
+```
+
 <!-- subcommands -->
 
 ## Subcommands
@@ -199,6 +244,9 @@ slay 53 --udp
 | `slay profile add` | Interactively create a new profile |
 | `slay profile rm <name>` | Remove a saved profile |
 | `slay info <port>` | Inspect a port (PID, command, CPU, memory, uptime) without killing |
+| `slay check <port>` | Check if port(s) are free (exit 0 = free, 1 = occupied) |
+| `slay check --next <port>` | Find the next available port starting from `<port>` |
+| `slay completions <shell>` | Output shell completions (bash, zsh, fish) |
 
 <!-- flags -->
 
@@ -218,6 +266,9 @@ slay 53 --udp
 | `-i, --interactive` | TUI process selector |
 | `--all` | Kill all listening processes |
 | `--profile <name>` | Run a saved profile from `.slay.json` |
+| `--name <pattern>` | Kill processes matching name (supports regex) |
+| `--exclude <pattern>` | Exclude matching processes from kill (repeatable) |
+| `--then <cmd>` | Run command after kill (e.g. `--then "npm start"`) |
 | `-h, --help` | Show help |
 
 <!-- interactive -->
@@ -280,6 +331,10 @@ for (const proc of procs) {
 - `platform`, `setPlatform` — platform adapter
 - `findConfig`, `loadConfig`, `saveConfig`, `resolveProfile`, `mergeProfileOpts` — config
 - `getProcessDetail` — process detail
+- `checkPort`, `checkPorts`, `findNextAvailable`, `isPortFree` — port availability
+- `runHook` — post-kill hook execution
+- `matchesPattern`, `excludeProcesses` — process name filtering
+- `findByName` — process discovery by name
 - `SlayError` — error type
 - Types: `ProcessInfo`, `KillResult`, `CliOptions`, `PlatformAdapter`, `KillErrorCode`, `ProcessDetail`, `ProfileOptions`, `SlayConfig`
 
@@ -304,6 +359,15 @@ When using `--json`, slay emits NDJSON with these event types:
 
 // Summary
 {"type": "summary", "killed": 1, "failed": 0}
+
+// Port check
+{"type": "check", "port": 3000, "available": false, "pid": 1234, "command": "node"}
+
+// Next available port
+{"type": "next_available", "port": 3001, "range": [3000, 3999]}
+
+// Post-kill hook
+{"type": "hook", "command": "npm start", "exitCode": 0, "success": true}
 ```
 
 <!-- architecture -->
@@ -319,11 +383,20 @@ src/
     profile.ts        slay profile list/add/rm
     profile-builder.ts Interactive profile creation TUI
     info.ts           slay info — inspect ports without killing
+    check.ts          slay check — port availability & next free port
+  completions/
+    index.ts          Shell completion dispatcher
+    bash.ts           Bash completion script generator
+    zsh.ts            Zsh completion script generator
+    fish.ts           Fish completion script generator
   core/
     discovery.ts      Port/process discovery
     killer.ts         Process killing logic
     labels.ts         Smart label resolution
     tree.ts           Process tree discovery
+    filter.ts         Process name matching & exclusion
+    check.ts          Port availability checking
+    hook.ts           Post-kill hook execution
   platform/
     index.ts          Platform detection & adapter selection
     unix.ts           macOS/Linux (lsof)

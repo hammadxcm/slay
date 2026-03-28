@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-03-28
+
+### Added
+- Shell completions for bash, zsh, and fish (`slay completions <shell>`)
+- Kill by process name with regex support (`--name <pattern>`)
+- Exclude filter to skip matching processes (`--exclude <pattern>`)
+- Post-kill hook to run commands after killing (`--then <cmd>`)
+- Port availability check subcommand (`slay check <port>`)
+- Find next available port (`slay check --next <port>`)
+- Dynamic profile name completion in shell
+- Profile support for `--name`, `--exclude`, and `--then` options
+
+### Changed
+- Minimum Node.js version raised to 20 (vitest v4 requirement)
+- Upgraded vitest to v4 and @vitest/coverage-v8 to v4
+- Added `windows-latest` to CI test matrix
+- Test count increased from 267 to 433 with 100% coverage maintained
+- Zero npm audit vulnerabilities
+
 ## [0.1.31] - 2026-03-21
 
 ### Added
