@@ -1,0 +1,17 @@
+{
+  "profiles": {
+    "dev": {
+      "ports": [3000, 5173, 5432],
+      "soft": true
+    },
+    "clean": {
+      "all": true,
+      "force": true
+    },
+    "api": {
+      "ports": [8080, 8443],
+      "tree": true,
+      "verbose": true
+    }
+  }
+}
