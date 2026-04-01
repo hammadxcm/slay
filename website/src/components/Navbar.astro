@@ -23,7 +23,11 @@ const links = [
   <div class="navbar-inner container">
     <a href={locale === 'en' ? '/' : `/${locale}/`} class="navbar-brand" aria-label="slay home">
       <Logo />
-      <span class="brand-text">slay</span>
+      <span class="brand-slash-wrap">
+        <span class="brand-slash-top">slay</span>
+        <span class="brand-slash-bottom">slay</span>
+        <span class="brand-slash-line"></span>
+      </span>
     </a>
 
     <button class="hamburger" id="hamburger" type="button" aria-label="Toggle menu" aria-expanded="false">
@@ -90,8 +94,85 @@ const links = [
     opacity: 1;
   }
 
-  .brand-text {
+  /* Slash-cut brand text */
+  .brand-slash-wrap {
+    position: relative;
+    display: inline-block;
     letter-spacing: -0.02em;
+    height: 1.3em;
+    line-height: 1.3;
+    color: var(--red);
+    text-shadow: 0 0 12px color-mix(in srgb, var(--red) 15%, transparent);
+  }
+
+  .brand-slash-top,
+  .brand-slash-bottom {
+    display: block;
+    position: relative;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+    color: inherit;
+  }
+
+  .brand-slash-top {
+    clip-path: inset(0 0 50% 0);
+  }
+
+  .brand-slash-bottom {
+    position: absolute;
+    top: 0;
+    left: 0;
+    clip-path: inset(50% 0 0 0);
+    color: inherit;
+  }
+
+  .brand-slash-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -10%;
+    right: -10%;
+    margin: auto;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, white 20%, var(--red), white 80%, transparent);
+    filter: drop-shadow(0 0 3px var(--red)) drop-shadow(0 0 6px color-mix(in srgb, var(--red) 50%, transparent));
+    z-index: 2;
+    pointer-events: none;
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+  }
+
+  .navbar-brand:hover .brand-slash-line {
+    animation: slay-slash 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .navbar-brand:hover .brand-slash-top {
+    transform: translate(-3px, -4px);
+    color: var(--red);
+    filter: brightness(1.3);
+  }
+
+  .navbar-brand:hover .brand-slash-bottom {
+    transform: translate(3px, 4px);
+    color: var(--red);
+    filter: brightness(1.3);
+  }
+
+  .navbar-brand:hover .brand-slash-wrap {
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--red) 25%, transparent));
+  }
+
+  @keyframes slay-slash {
+    0%   { clip-path: inset(0 100% 0 0); opacity: 0; }
+    5%   { opacity: 1; }
+    30%  { clip-path: inset(0 0 0 0); opacity: 1; }
+    55%  { opacity: 0.5; }
+    100% { clip-path: inset(0 0 0 0); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .brand-slash-line { display: none; }
+    .navbar-brand:hover .brand-slash-top,
+    .navbar-brand:hover .brand-slash-bottom { transform: none; }
   }
 
   .navbar-links {

@@ -15,7 +15,11 @@ const t = getTranslation(locale);
     <div class="footer-left">
       <div class="footer-brand">
         <Logo />
-        <span class="footer-name">slay</span>
+        <span class="footer-slash-wrap">
+          <span class="footer-slash-top">slay</span>
+          <span class="footer-slash-bottom">slay</span>
+          <span class="footer-slash-line"></span>
+        </span>
       </div>
       <p class="footer-tagline">{t('footer.tagline')}</p>
       <p class="footer-credit"><a href="https://github.com/hammadxcm" target="_blank" rel="noopener noreferrer" class="footer-credit-link">{t('footer.made')}<span class="sr-only">(opens in new tab)</span></a></p>
@@ -100,6 +104,80 @@ const t = getTranslation(locale);
   .footer-name {
     font-weight: 700;
     font-size: 1.1rem;
+  }
+
+  /* Footer slash-cut text */
+  .footer-slash-wrap {
+    position: relative;
+    display: inline-block;
+    font-weight: 700;
+    font-size: 1.1rem;
+    height: 1.3em;
+    line-height: 1.3;
+    color: var(--red);
+    text-shadow: 0 0 10px color-mix(in srgb, var(--red) 12%, transparent);
+  }
+
+  .footer-slash-top,
+  .footer-slash-bottom {
+    display: block;
+    position: relative;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+    color: inherit;
+  }
+
+  .footer-slash-top { clip-path: inset(0 0 50% 0); }
+
+  .footer-slash-bottom {
+    position: absolute;
+    top: 0;
+    left: 0;
+    clip-path: inset(50% 0 0 0);
+    color: inherit;
+  }
+
+  .footer-slash-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -10%;
+    right: -10%;
+    margin: auto;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, white 20%, var(--red), white 80%, transparent);
+    filter: drop-shadow(0 0 3px var(--red)) drop-shadow(0 0 6px color-mix(in srgb, var(--red) 50%, transparent));
+    z-index: 2;
+    pointer-events: none;
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+  }
+
+  .footer-brand:hover .footer-slash-line {
+    animation: slay-footer-slash 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .footer-brand:hover .footer-slash-top {
+    transform: translate(-2px, -3px);
+    filter: brightness(1.3);
+  }
+
+  .footer-brand:hover .footer-slash-bottom {
+    transform: translate(2px, 3px);
+    filter: brightness(1.3);
+  }
+
+  @keyframes slay-footer-slash {
+    0%   { clip-path: inset(0 100% 0 0); opacity: 0; }
+    5%   { opacity: 1; }
+    30%  { clip-path: inset(0 0 0 0); opacity: 1; }
+    55%  { opacity: 0.5; }
+    100% { clip-path: inset(0 0 0 0); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .footer-slash-line { display: none; }
+    .footer-brand:hover .footer-slash-top,
+    .footer-brand:hover .footer-slash-bottom { transform: none; }
   }
 
   .footer-tagline {
@@ -226,3 +304,54 @@ const t = getTranslation(locale);
     }
   }
 </style>
+
+<script>
+  // Auto-slash both nav and footer "slay" logos once after 10 seconds
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    setTimeout(function() {
+      // Nav slash
+      var navLine = document.querySelector('.brand-slash-line');
+      var navTop = document.querySelector('.brand-slash-top');
+      var navBottom = document.querySelector('.brand-slash-bottom');
+      if (navLine && navTop && navBottom) {
+        navLine.style.animation = 'slay-slash 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+        navLine.style.opacity = '1';
+        navTop.style.transform = 'translate(-3px, -4px)';
+        navTop.style.filter = 'brightness(1.3)';
+        navBottom.style.transform = 'translate(3px, 4px)';
+        navBottom.style.filter = 'brightness(1.3)';
+        setTimeout(function() {
+          navLine.style.animation = '';
+          navLine.style.opacity = '';
+          navTop.style.transform = '';
+          navTop.style.filter = '';
+          navBottom.style.transform = '';
+          navBottom.style.filter = '';
+        }, 800);
+      }
+
+      // Footer slash
+      var footerLine = document.querySelector('.footer-slash-line');
+      var footerTop = document.querySelector('.footer-slash-top');
+      var footerBottom = document.querySelector('.footer-slash-bottom');
+      if (footerLine && footerTop && footerBottom) {
+        footerLine.style.animation = 'slay-footer-slash 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+        footerLine.style.opacity = '1';
+        footerTop.style.transform = 'translate(-2px, -3px)';
+        footerTop.style.filter = 'brightness(1.3)';
+        footerBottom.style.transform = 'translate(2px, 3px)';
+        footerBottom.style.filter = 'brightness(1.3)';
+        setTimeout(function() {
+          footerLine.style.animation = '';
+          footerLine.style.opacity = '';
+          footerTop.style.transform = '';
+          footerTop.style.filter = '';
+          footerBottom.style.transform = '';
+          footerBottom.style.filter = '';
+        }, 800);
+      }
+    }, 10000);
+  });
+</script>
