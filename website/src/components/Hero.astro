@@ -24,7 +24,10 @@ const t = getTranslation(locale);
     <div class="hero-content">
       <h1 class="hero-title">
         {t('hero.title.line1')}<br />
-        <span class="gradient-text" id="hero-rotating-word" aria-live="polite" aria-atomic="true">{t('hero.title.line2')}</span>
+        <span class="hero-word-wrap">
+          <span class="gradient-text" id="hero-rotating-word" aria-live="polite" aria-atomic="true">{t('hero.title.line2')}</span>
+          <span class="hero-word-slash" id="hero-word-slash" aria-hidden="true"></span>
+        </span>
       </h1>
       <p class="hero-description">
         {t('hero.description')}
@@ -114,21 +117,22 @@ const t = getTranslation(locale);
   @keyframes word-in {
     0% {
       opacity: 0;
-      transform: translateY(100%) rotateX(-80deg);
-      filter: blur(8px);
+      transform: translateY(30px);
+      filter: blur(4px);
+      clip-path: inset(50% 0 0 0);
     }
-    60% {
+    30% {
+      clip-path: inset(0 0 0 0);
+    }
+    50% {
       opacity: 1;
-      transform: translateY(-8%) rotateX(5deg);
       filter: blur(0);
-    }
-    80% {
-      transform: translateY(2%);
     }
     100% {
       opacity: 1;
-      transform: translateY(0) rotateX(0deg);
+      transform: translateY(0);
       filter: blur(0);
+      clip-path: inset(0 0 0 0);
     }
   }
 
@@ -137,14 +141,24 @@ const t = getTranslation(locale);
       opacity: 1;
       transform: translateY(0) scale(1);
       filter: blur(0);
+      clip-path: inset(0 0 0 0);
     }
-    30% {
-      opacity: 0.8;
-      transform: translateY(-10%) scale(1.04);
+    20% {
+      opacity: 0.9;
+      /* Split starts — gap opens along the middle */
+      clip-path: inset(0 0 48% 0);
+      transform: translateY(-3px) scale(1.02);
+    }
+    50% {
+      opacity: 0.5;
+      clip-path: inset(0 0 55% 0);
+      transform: translateY(-15px) scale(1.01);
+      filter: blur(2px);
     }
     100% {
       opacity: 0;
-      transform: translateY(-120%) scale(0.9);
+      clip-path: inset(0 0 100% 0);
+      transform: translateY(-40px) scale(0.95);
       filter: blur(6px);
     }
   }
@@ -171,6 +185,41 @@ const t = getTranslation(locale);
 
   #hero-rotating-word.leaving {
     animation: word-out 0.35s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+  }
+
+  /* Slash sweep on word change */
+  .hero-word-wrap {
+    position: relative;
+    display: inline-block;
+  }
+
+  .hero-word-slash {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -5%;
+    right: -5%;
+    margin: auto;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, white 15%, var(--red), white 85%, transparent);
+    filter: drop-shadow(0 0 2px white) drop-shadow(0 0 6px var(--red)) drop-shadow(0 0 12px var(--red));
+    z-index: 5;
+    pointer-events: none;
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+  }
+
+  .hero-word-slash.active {
+    animation: hero-slash-sweep 1s cubic-bezier(0.05, 0.8, 0.2, 1) forwards;
+  }
+
+  @keyframes hero-slash-sweep {
+    0%   { clip-path: inset(0 100% 0 0); opacity: 0; height: 2px; }
+    5%   { opacity: 1; height: 3px; }
+    20%  { clip-path: inset(0 0 0 0); opacity: 1; height: 3px; }
+    35%  { opacity: 0.6; height: 2px; }
+    55%  { opacity: 0.2; height: 1px; }
+    100% { clip-path: inset(0 0 0 0); opacity: 0; height: 0px; }
   }
 
   .hero-description {
@@ -479,9 +528,18 @@ const t = getTranslation(locale);
 
   let synonyms = themeSynonyms[getThemeName()] || themeSynonyms.dark;
   const rotatingWord = document.getElementById('hero-rotating-word');
+  const wordSlash = document.getElementById('hero-word-slash');
   if (rotatingWord && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     let wordIndex = 0;
     setInterval(() => {
+      // Trigger slash sweep
+      if (wordSlash) {
+        wordSlash.classList.remove('active');
+        void wordSlash.offsetWidth;
+        wordSlash.classList.add('active');
+        setTimeout(() => wordSlash.classList.remove('active'), 1000);
+      }
+
       rotatingWord.classList.remove('entering');
       rotatingWord.classList.add('leaving');
       setTimeout(() => {
