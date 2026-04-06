@@ -113,7 +113,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           repository: hammadxcm/homebrew-slay
-          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          token: ${{ secrets.RELEASE_BOT_TOKEN }}
       - name: Update formula
         run: |
           TAG="${{ inputs.tag || github.ref_name }}"
@@ -267,7 +267,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           repository: hammadxcm/apt-repo
-          token: ${{ secrets.WINGET_GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_BOT_TOKEN }}
       - uses: actions/download-artifact@v8
         with:
           pattern: "slay-port_*.deb"
@@ -315,7 +315,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           repository: hammadxcm/scoop-slay
-          token: ${{ secrets.WINGET_GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_BOT_TOKEN }}
       - name: Update Scoop manifest
         run: |
           TAG="${{ inputs.tag || github.ref_name }}"
