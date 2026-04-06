@@ -1,0 +1,24 @@
+name: slay-it
+version: '0.2.2'
+summary: Kill processes by port. Beautifully.
+description: |
+  slay is a CLI tool for killing processes by port number.
+  Features interactive TUI, port ranges, profile presets,
+  watch mode, process tree killing, JSON output, and more.
+base: core24
+grade: stable
+confinement: classic
+license: MIT
+
+apps:
+  slay:
+    command: bin/slay
+
+parts:
+  slay:
+    plugin: dump
+    source: .
+    organize:
+      slay-binary: bin/slay
+    stage:
+      - bin/slay

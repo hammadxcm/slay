@@ -39,6 +39,30 @@ const managers = [
     quick: 'brew install hammadxcm/slay/slay-port',
     global: 'brew install hammadxcm/slay/slay-port && slay 3000',
   },
+  {
+    id: 'snap',
+    label: 'Snap',
+    quick: 'sudo snap install slay-it --classic',
+    global: 'sudo snap install slay-it --classic && slay 3000',
+  },
+  {
+    id: 'apt',
+    label: 'APT',
+    quick: 'sudo apt install slay-port',
+    global: 'sudo apt install slay-port && slay 3000',
+  },
+  {
+    id: 'scoop',
+    label: 'Scoop',
+    quick: 'scoop bucket add slay https://github.com/hammadxcm/scoop-slay && scoop install slay',
+    global: 'scoop install slay && slay 3000',
+  },
+  {
+    id: 'winget',
+    label: 'winget',
+    quick: 'winget install hammadxcm.slay-port',
+    global: 'winget install hammadxcm.slay-port && slay 3000',
+  },
 ];
 
 const apiCommand = "import { findByPort, killProcess } from 'slay-port'";

@@ -169,3 +169,200 @@ jobs:
           git add Formula/slay-port.rb
           git commit -m "Update slay-port to ${VERSION}"
           git push
+
+  publish-snap:
+    needs: release
+    if: always() && needs.release.result == 'success'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            artifact: slay-linux-x64
+          - arch: arm64
+            artifact: slay-linux-arm64
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+      - name: Download binary
+        run: |
+          TAG="${{ inputs.tag || github.ref_name }}"
+          curl -sL "https://github.com/hammadxcm/slay/releases/download/${TAG}/${{ matrix.artifact }}" -o slay-binary
+          chmod +x slay-binary
+      - name: Set version in snapcraft.yaml
+        run: |
+          TAG="${{ inputs.tag || github.ref_name }}"
+          VERSION="${TAG#v}"
+          sed -i "s/^version: .*/version: '${VERSION}'/" snap/snapcraft.yaml
+      - uses: snapcore/action-build@v1
+        id: build
+        with:
+          snapcraft-args: --destructive-mode --target-arch=${{ matrix.arch }}
+      - uses: snapcore/action-publish@v1
+        with:
+          snap: ${{ steps.build.outputs.snap }}
+          release: stable
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAP_STORE_LOGIN }}
+        continue-on-error: true
+
+  build-deb:
+    needs: release
+    if: always() && needs.release.result == 'success'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - artifact: slay-linux-x64
+            arch: amd64
+          - artifact: slay-linux-arm64
+            arch: arm64
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+      - name: Build .deb package
+        run: |
+          TAG="${{ inputs.tag || github.ref_name }}"
+          VERSION="${TAG#v}"
+          PKG="slay-port_${VERSION}_${{ matrix.arch }}"
+
+          curl -sL "https://github.com/hammadxcm/slay/releases/download/${TAG}/${{ matrix.artifact }}" -o slay
+          chmod +x slay
+
+          mkdir -p "${PKG}/DEBIAN"
+          mkdir -p "${PKG}/usr/bin"
+          mkdir -p "${PKG}/usr/share/doc/slay-port"
+
+          printf '%s\n' \
+            "Package: slay-port" \
+            "Version: ${VERSION}" \
+            "Section: utils" \
+            "Priority: optional" \
+            "Architecture: ${{ matrix.arch }}" \
+            "Maintainer: Hammad Khan <hammadkhanxcm@gmail.com>" \
+            "Homepage: https://slay.fyniti.co.uk" \
+            "Description: Kill processes by port. Beautifully." \
+            " slay is a CLI tool for killing processes by port number with" \
+            " interactive TUI, port ranges, profile presets, watch mode," \
+            " process tree killing, JSON output, and more." \
+            "Recommends: lsof" \
+            > "${PKG}/DEBIAN/control"
+
+          cp LICENSE "${PKG}/usr/share/doc/slay-port/copyright"
+          cp slay "${PKG}/usr/bin/slay"
+
+          dpkg-deb --build "${PKG}"
+      - name: Upload .deb to release
+        run: |
+          TAG="${{ inputs.tag || github.ref_name }}"
+          VERSION="${TAG#v}"
+          gh release upload "${TAG}" "slay-port_${VERSION}_${{ matrix.arch }}.deb" --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: slay-port_${{ matrix.arch }}.deb
+          path: "*.deb"
+
+  update-apt-repo:
+    needs: build-deb
+    if: always() && needs.build-deb.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          repository: hammadxcm/apt-repo
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: "slay-port_*.deb"
+          merge-multiple: true
+          path: incoming
+      - name: Update APT repository
+        run: |
+          TAG="${{ inputs.tag || github.ref_name }}"
+          VERSION="${TAG#v}"
+
+          mkdir -p pool/main/s/slay-port
+          cp incoming/*.deb pool/main/s/slay-port/
+
+          mkdir -p dists/stable/main/binary-amd64
+          mkdir -p dists/stable/main/binary-arm64
+
+          cd dists/stable
+          dpkg-scanpackages -m ../../pool/main /dev/null > main/binary-amd64/Packages 2>/dev/null || true
+          gzip -k -f main/binary-amd64/Packages
+          cp main/binary-amd64/Packages main/binary-arm64/Packages
+          gzip -k -f main/binary-arm64/Packages
+          apt-ftparchive release . > Release
+          cd ../..
+
+          echo "${{ secrets.APT_GPG_PRIVATE_KEY }}" | gpg --batch --import
+          gpg --batch --armor --detach-sign -o dists/stable/Release.gpg dists/stable/Release
+          gpg --batch --armor --clearsign -o dists/stable/InRelease dists/stable/Release
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Update slay-port to ${VERSION}"
+          git push
+
+  update-scoop:
+    needs: release
+    if: always() && needs.release.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          repository: hammadxcm/scoop-slay
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+      - name: Update Scoop manifest
+        run: |
+          TAG="${{ inputs.tag || github.ref_name }}"
+          VERSION="${TAG#v}"
+          BASE_URL="https://github.com/hammadxcm/slay/releases/download/${TAG}"
+
+          SHA_WINDOWS_X64=$(curl -sL "${BASE_URL}/slay-windows-x64.exe" | sha256sum | cut -d' ' -f1)
+
+          mkdir -p bucket
+          jq -n \
+            --arg ver "$VERSION" \
+            --arg url "${BASE_URL}/slay-windows-x64.exe#/slay.exe" \
+            --arg hash "$SHA_WINDOWS_X64" \
+            '{
+              version: $ver,
+              description: "Kill processes by port. Beautifully.",
+              homepage: "https://slay.fyniti.co.uk",
+              license: "MIT",
+              architecture: { "64bit": { url: $url, hash: $hash } },
+              bin: "slay.exe",
+              checkver: "github",
+              autoupdate: { architecture: { "64bit": { url: "https://github.com/hammadxcm/slay/releases/download/v$version/slay-windows-x64.exe#/slay.exe" } } }
+            }' > bucket/slay.json
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add bucket/slay.json
+          git commit -m "Update slay to ${VERSION}"
+          git push
+
+  update-winget:
+    needs: release
+    if: always() && needs.release.result == 'success'
+    runs-on: windows-latest
+    steps:
+      - name: Update winget manifest
+        run: |
+          $tag = "${{ inputs.tag || github.ref_name }}"
+          $version = $tag -replace '^v', ''
+          $url = "https://github.com/hammadxcm/slay/releases/download/${tag}/slay-windows-x64.exe"
+
+          Invoke-WebRequest "https://aka.ms/wingetcreate/latest" -OutFile wingetcreate.exe
+          .\wingetcreate.exe update hammadxcm.slay-port `
+            --version $version `
+            --urls $url `
+            --submit `
+            --token ${{ secrets.WINGET_GITHUB_TOKEN }}
+        shell: pwsh
