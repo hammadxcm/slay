@@ -167,7 +167,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add Formula/slay-port.rb
-          git commit -m "Update slay-port to ${VERSION}"
+          git diff --cached --quiet || git commit -m "Update slay-port to ${VERSION}"
           git push
 
   publish-snap:
@@ -304,7 +304,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "Update slay-port to ${VERSION}"
+          git diff --cached --quiet || git commit -m "Update slay-port to ${VERSION}"
           git push
 
   update-scoop:
@@ -343,7 +343,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add bucket/slay.json
-          git commit -m "Update slay to ${VERSION}"
+          git diff --cached --quiet || git commit -m "Update slay to ${VERSION}"
           git push
 
   update-winget:
