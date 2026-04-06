@@ -174,13 +174,6 @@ jobs:
     needs: release
     if: always() && needs.release.result == 'success'
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - arch: amd64
-            artifact: slay-linux-x64
-          - arch: arm64
-            artifact: slay-linux-arm64
     steps:
       - uses: actions/checkout@v6
         with:
@@ -188,7 +181,7 @@ jobs:
       - name: Download binary
         run: |
           TAG="${{ inputs.tag || github.ref_name }}"
-          curl -sL "https://github.com/hammadxcm/slay/releases/download/${TAG}/${{ matrix.artifact }}" -o slay-binary
+          curl -sL "https://github.com/hammadxcm/slay/releases/download/${TAG}/slay-linux-x64" -o slay-binary
           chmod +x slay-binary
       - name: Set version in snapcraft.yaml
         run: |
@@ -198,7 +191,7 @@ jobs:
       - uses: snapcore/action-build@v1
         id: build
         with:
-          snapcraft-args: --destructive-mode --target-arch=${{ matrix.arch }}
+          snapcraft-args: --destructive-mode
       - uses: snapcore/action-publish@v1
         with:
           snap: ${{ steps.build.outputs.snap }}
@@ -280,6 +273,8 @@ jobs:
           pattern: "slay-port_*.deb"
           merge-multiple: true
           path: incoming
+      - name: Install APT tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq dpkg-dev apt-utils
       - name: Update APT repository
         run: |
           TAG="${{ inputs.tag || github.ref_name }}"
@@ -292,7 +287,7 @@ jobs:
           mkdir -p dists/stable/main/binary-arm64
 
           cd dists/stable
-          dpkg-scanpackages -m ../../pool/main /dev/null > main/binary-amd64/Packages 2>/dev/null || true
+          dpkg-scanpackages -m ../../pool/main /dev/null > main/binary-amd64/Packages
           gzip -k -f main/binary-amd64/Packages
           cp main/binary-amd64/Packages main/binary-arm64/Packages
           gzip -k -f main/binary-arm64/Packages
@@ -360,9 +355,19 @@ jobs:
           $url = "https://github.com/hammadxcm/slay/releases/download/${tag}/slay-windows-x64.exe"
 
           Invoke-WebRequest "https://aka.ms/wingetcreate/latest" -OutFile wingetcreate.exe
+
+          # Try update first, fall back to new for first submission
           .\wingetcreate.exe update hammadxcm.slay-port `
             --version $version `
             --urls $url `
             --submit `
-            --token ${{ secrets.WINGET_GITHUB_TOKEN }}
+            --token ${{ secrets.WINGET_GITHUB_TOKEN }} 2>$null
+
+          if ($LASTEXITCODE -ne 0) {
+            .\wingetcreate.exe new $url `
+              --version $version `
+              --submit `
+              --token ${{ secrets.WINGET_GITHUB_TOKEN }}
+          }
         shell: pwsh
+        continue-on-error: true
