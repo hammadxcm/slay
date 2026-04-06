@@ -267,7 +267,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           repository: hammadxcm/apt-repo
-          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          token: ${{ secrets.WINGET_GITHUB_TOKEN }}
       - uses: actions/download-artifact@v8
         with:
           pattern: "slay-port_*.deb"
@@ -275,6 +275,10 @@ jobs:
           path: incoming
       - name: Install APT tools
         run: sudo apt-get update -qq && sudo apt-get install -y -qq dpkg-dev apt-utils
+      - name: Import GPG key
+        run: echo "$APT_GPG_KEY" | gpg --batch --import
+        env:
+          APT_GPG_KEY: ${{ secrets.APT_GPG_PRIVATE_KEY }}
       - name: Update APT repository
         run: |
           TAG="${{ inputs.tag || github.ref_name }}"
@@ -294,7 +298,6 @@ jobs:
           apt-ftparchive release . > Release
           cd ../..
 
-          echo "${{ secrets.APT_GPG_PRIVATE_KEY }}" | gpg --batch --import
           gpg --batch --armor --detach-sign -o dists/stable/Release.gpg dists/stable/Release
           gpg --batch --armor --clearsign -o dists/stable/InRelease dists/stable/Release
 
@@ -312,7 +315,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           repository: hammadxcm/scoop-slay
-          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          token: ${{ secrets.WINGET_GITHUB_TOKEN }}
       - name: Update Scoop manifest
         run: |
           TAG="${{ inputs.tag || github.ref_name }}"
