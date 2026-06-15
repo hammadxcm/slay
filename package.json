@@ -45,6 +45,9 @@
   "engines": {
     "node": ">=20"
   },
+  "overrides": {
+    "esbuild": "^0.28.1"
+  },
   "devDependencies": {
     "@biomejs/biome": "^1.9.0",
     "@types/node": "^25.3.3",
